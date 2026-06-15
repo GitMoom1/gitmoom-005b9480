@@ -81,10 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "GitMoon is the AI-powered git workflow that automates reviews, merges, and releases for modern engineering teams." },
       { name: "author", content: "GitMoon" },
       { property: "og:title", content: "GitMoon — Ship code at the speed of light" },
-      { property: "og:description", content: "AI-powered git workflow that automates reviews, merges, and releases." },
+      { property: "og:description", content: "GitMoon is the AI-powered git workflow that automates reviews, merges, and releases for modern engineering teams." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@gitmoon" },
+      { name: "twitter:title", content: "GitMoon — Ship code at the speed of light" },
+      { name: "twitter:description", content: "GitMoon is the AI-powered git workflow that automates reviews, merges, and releases for modern engineering teams." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Vg0mR1g0q9bsFViO9al0bglMLEp1/social-images/social-1781567621271-gitmoon-logo.webp" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Vg0mR1g0q9bsFViO9al0bglMLEp1/social-images/social-1781567621271-gitmoon-logo.webp" },
     ],
     links: [
       {
