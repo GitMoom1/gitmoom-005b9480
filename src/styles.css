@@ -63,25 +63,32 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  /* GitMoon — deep cosmic dark theme */
+  --background: oklch(0.16 0.04 270);
+  --foreground: oklch(0.97 0.01 270);
+  --card: oklch(0.21 0.045 270);
+  --card-foreground: oklch(0.97 0.01 270);
+  --popover: oklch(0.21 0.045 270);
+  --popover-foreground: oklch(0.97 0.01 270);
+  --primary: oklch(0.72 0.18 295);
+  --primary-foreground: oklch(0.12 0.04 270);
+  --secondary: oklch(0.78 0.14 200);
+  --secondary-foreground: oklch(0.12 0.04 270);
+  --muted: oklch(0.26 0.04 270);
+  --muted-foreground: oklch(0.72 0.03 270);
+  --accent: oklch(0.82 0.15 85);
+  --accent-foreground: oklch(0.15 0.04 270);
+  --destructive: oklch(0.65 0.22 25);
+  --destructive-foreground: oklch(0.98 0.01 270);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.72 0.18 295);
+  --moon-glow: oklch(0.92 0.12 80);
+  --gradient-cosmic: linear-gradient(135deg, oklch(0.72 0.18 295) 0%, oklch(0.78 0.14 200) 100%);
+  --gradient-aurora: radial-gradient(ellipse at top right, oklch(0.72 0.18 295 / 0.35), transparent 60%),
+    radial-gradient(ellipse at bottom left, oklch(0.78 0.14 200 / 0.25), transparent 55%);
+  --shadow-glow: 0 0 60px oklch(0.72 0.18 295 / 0.45);
+  --shadow-soft: 0 20px 60px -20px oklch(0.1 0.03 270 / 0.6);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -140,5 +147,36 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background-image: var(--gradient-aurora);
+    background-attachment: fixed;
   }
+}
+
+@layer utilities {
+  .text-gradient {
+    background: var(--gradient-cosmic);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .bg-gradient-cosmic { background: var(--gradient-cosmic); }
+  .shadow-glow { box-shadow: var(--shadow-glow); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .glass {
+    background: oklch(1 0 0 / 0.04);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid oklch(1 0 0 / 0.08);
+  }
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .animate-float { animation: float-slow 6s ease-in-out infinite; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+  .animate-twinkle { animation: twinkle 3s ease-in-out infinite; }
 }
