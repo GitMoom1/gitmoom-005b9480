@@ -214,12 +214,14 @@ function Index() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
               href="#cta"
+              onClick={() => onCtaClick("hero_start_free")}
               className="inline-flex items-center gap-2 rounded-full bg-gradient-cosmic px-6 py-3 text-base font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
             >
               Start free <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#how"
+              onClick={() => onCtaClick("hero_github")}
               className="inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-base font-medium text-foreground transition hover:bg-white/10"
             >
               <Github className="h-4 w-4" /> View on GitHub
