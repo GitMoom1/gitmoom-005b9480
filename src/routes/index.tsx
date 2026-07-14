@@ -436,21 +436,31 @@ release:
           </p>
           <form
             className="relative mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={onLeadSubmit}
           >
             <input
               type="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={leadStatus === "loading"}
               placeholder="you@company.com"
               className="flex-1 rounded-full border border-border bg-background/60 px-5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
             />
             <button
               type="submit"
+              disabled={leadStatus === "loading"}
               className="inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-cosmic px-6 py-3 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
             >
-              Get started <ArrowRight className="h-4 w-4" />
+              {leadStatus === "loading" ? "Sending…" : "Get started"} <ArrowRight className="h-4 w-4" />
             </button>
           </form>
+          {leadStatus === "success" && (
+            <p className="relative mt-4 text-sm text-secondary">Thanks — we'll be in touch shortly.</p>
+          )}
+          {leadStatus === "error" && (
+            <p className="relative mt-4 text-sm text-destructive">Something went wrong. Please try again.</p>
+          )}
         </div>
       </section>
 
