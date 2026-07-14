@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   listLeads, deleteLead, checkAdmin, exportLeadsCsv,
   createAdminInvite, listAdminInvites, revokeAdminInvite,
-  listAdmins, revokeAdmin, listAuditLog,
+  listAdmins, revokeAdmin, listAuditLog, exportAuditLogCsv,
 } from "@/lib/admin-leads.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/leads")({
@@ -39,6 +39,7 @@ function LeadsPanel() {
   const fetchAdmins = useServerFn(listAdmins);
   const removeAdmin = useServerFn(revokeAdmin);
   const fetchAudit = useServerFn(listAuditLog);
+  const exportAudit = useServerFn(exportAuditLogCsv);
 
   const [tab, setTab] = useState<Tab>("leads");
   const [query, setQuery] = useState("");
@@ -50,6 +51,25 @@ function LeadsPanel() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [lastInviteLink, setLastInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [auditAction, setAuditAction] = useState("");
+  const [auditSearch, setAuditSearch] = useState("");
+  const [auditFrom, setAuditFrom] = useState("");
+  const [auditTo, setAuditTo] = useState("");
+  const [debouncedAudit, setDebouncedAudit] = useState({ action: "", search: "", from: "", to: "" });
+
+  useEffect(() => {
+    const t = setTimeout(
+      () =>
+        setDebouncedAudit({
+          action: auditAction.trim(),
+          search: auditSearch.trim(),
+          from: auditFrom,
+          to: auditTo,
+        }),
+      300,
+    );
+    return () => clearTimeout(t);
+  }, [auditAction, auditSearch, auditFrom, auditTo]);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -90,8 +110,17 @@ function LeadsPanel() {
     enabled: isAdmin && tab === "admins",
   });
   const auditQuery = useQuery({
-    queryKey: ["audit"],
-    queryFn: () => fetchAudit({ data: { limit: 200 } }),
+    queryKey: ["audit", debouncedAudit],
+    queryFn: () =>
+      fetchAudit({
+        data: {
+          limit: 200,
+          action: debouncedAudit.action || undefined,
+          search: debouncedAudit.search || undefined,
+          from: debouncedAudit.from ? new Date(debouncedAudit.from).toISOString() : undefined,
+          to: debouncedAudit.to ? new Date(debouncedAudit.to).toISOString() : undefined,
+        },
+      }),
     enabled: isAdmin && tab === "audit",
   });
 
@@ -132,6 +161,26 @@ function LeadsPanel() {
     const a = document.createElement("a");
     a.href = url;
     a.download = `gitmoon-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const onExportAudit = async () => {
+    const { csv } = await exportAudit({
+      data: {
+        action: debouncedAudit.action || undefined,
+        search: debouncedAudit.search || undefined,
+        from: debouncedAudit.from ? new Date(debouncedAudit.from).toISOString() : undefined,
+        to: debouncedAudit.to ? new Date(debouncedAudit.to).toISOString() : undefined,
+      },
+    });
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `gitmoon-audit-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -462,6 +511,58 @@ function LeadsPanel() {
 
       {tab === "audit" && (
         <section className="mt-6">
+          <div className="mb-4 flex flex-wrap items-end gap-2">
+            <div className="flex-1 min-w-[180px]">
+              <label className="mb-1 block text-xs text-muted-foreground">Action contains</label>
+              <input
+                value={auditAction}
+                onChange={(e) => setAuditAction(e.target.value)}
+                placeholder="e.g. admin.invite"
+                className="w-full rounded-lg border border-border bg-background/60 px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div className="flex-1 min-w-[180px]">
+              <label className="mb-1 block text-xs text-muted-foreground">Search target</label>
+              <input
+                value={auditSearch}
+                onChange={(e) => setAuditSearch(e.target.value)}
+                placeholder="target id or type"
+                className="w-full rounded-lg border border-border bg-background/60 px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">From</label>
+              <input
+                type="datetime-local"
+                value={auditFrom}
+                onChange={(e) => setAuditFrom(e.target.value)}
+                className="rounded-lg border border-border bg-background/60 px-2 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">To</label>
+              <input
+                type="datetime-local"
+                value={auditTo}
+                onChange={(e) => setAuditTo(e.target.value)}
+                className="rounded-lg border border-border bg-background/60 px-2 py-2 text-sm"
+              />
+            </div>
+            <button
+              onClick={() => {
+                setAuditAction(""); setAuditSearch(""); setAuditFrom(""); setAuditTo("");
+              }}
+              className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent/10"
+            >
+              Clear
+            </button>
+            <button
+              onClick={onExportAudit}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-cosmic px-3 py-2 text-sm text-primary-foreground shadow-glow hover:opacity-90"
+            >
+              <Download className="h-4 w-4" /> Export CSV
+            </button>
+          </div>
           <div className="overflow-hidden rounded-2xl border border-border">
             <table className="w-full text-sm">
               <thead className="bg-card/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
