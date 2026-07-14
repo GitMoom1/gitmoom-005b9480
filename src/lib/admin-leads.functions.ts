@@ -233,15 +233,77 @@ export const revokeAdmin = createServerFn({ method: "POST" })
 export const listAuditLog = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
-    z.object({ limit: z.number().int().min(1).max(500).default(100) }).default({}).parse(input ?? {}),
+    z
+      .object({
+        limit: z.number().int().min(1).max(500).default(100),
+        action: z.string().trim().max(100).optional(),
+        targetType: z.string().trim().max(60).optional(),
+        search: z.string().trim().max(200).optional(),
+        from: z.string().datetime().optional(),
+        to: z.string().datetime().optional(),
+      })
+      .default({})
+      .parse(input ?? {}),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { data: rows, error } = await context.supabase
+    let q = context.supabase
       .from("audit_log")
       .select("id, actor_id, action, target_type, target_id, metadata, created_at")
       .order("created_at", { ascending: false })
       .limit(data.limit);
+    if (data.action) q = q.ilike("action", `%${data.action.replace(/[%,]/g, " ")}%`);
+    if (data.targetType) q = q.eq("target_type", data.targetType);
+    if (data.from) q = q.gte("created_at", data.from);
+    if (data.to) q = q.lte("created_at", data.to);
+    if (data.search) {
+      const s = data.search.replace(/[%,]/g, " ");
+      q = q.or(`action.ilike.%${s}%,target_id.ilike.%${s}%,target_type.ilike.%${s}%`);
+    }
+    const { data: rows, error } = await q;
     if (error) throw error;
     return { entries: rows ?? [] };
+  });
+
+export const exportAuditLogCsv = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        action: z.string().trim().max(100).optional(),
+        targetType: z.string().trim().max(60).optional(),
+        search: z.string().trim().max(200).optional(),
+        from: z.string().datetime().optional(),
+        to: z.string().datetime().optional(),
+      })
+      .default({})
+      .parse(input ?? {}),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context);
+    let q = context.supabase
+      .from("audit_log")
+      .select("id, actor_id, action, target_type, target_id, metadata, created_at")
+      .order("created_at", { ascending: false })
+      .limit(10000);
+    if (data.action) q = q.ilike("action", `%${data.action.replace(/[%,]/g, " ")}%`);
+    if (data.targetType) q = q.eq("target_type", data.targetType);
+    if (data.from) q = q.gte("created_at", data.from);
+    if (data.to) q = q.lte("created_at", data.to);
+    if (data.search) {
+      const s = data.search.replace(/[%,]/g, " ");
+      q = q.or(`action.ilike.%${s}%,target_id.ilike.%${s}%,target_type.ilike.%${s}%`);
+    }
+    const { data: rows, error } = await q;
+    if (error) throw error;
+    const header = ["id", "created_at", "actor_id", "action", "target_type", "target_id", "metadata"];
+    const lines = (rows ?? []).map((r: any) => header.map((k) => csvEscape((r as any)[k])).join(","));
+    const csv = [header.join(","), ...lines].join("\n");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.rpc("log_audit", {
+      _action: "audit.exported",
+      _target_type: "audit_log",
+      _metadata: { count: lines.length, actor_id: context.userId, filters: data },
+    });
+    return { csv, count: lines.length };
   });
