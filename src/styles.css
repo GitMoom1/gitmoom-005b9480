@@ -158,10 +158,10 @@
   .shadow-glow { box-shadow: var(--shadow-glow); }
   .shadow-soft { box-shadow: var(--shadow-soft); }
   .glass {
-    background: oklch(1 0 0 / 0.04);
+    background: color-mix(in oklch, var(--foreground) 4%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid oklch(1 0 0 / 0.08);
+    border: 1px solid color-mix(in oklch, var(--foreground) 10%, transparent);
   }
   @keyframes float-slow {
     0%, 100% { transform: translateY(0); }
