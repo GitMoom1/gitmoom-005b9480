@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   listLeads, deleteLead, checkAdmin, exportLeadsCsv,
   createAdminInvite, listAdminInvites, revokeAdminInvite,
-  listAdmins, revokeAdmin, listAuditLog,
+  listAdmins, revokeAdmin, listAuditLog, exportAuditLogCsv,
 } from "@/lib/admin-leads.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/leads")({
@@ -39,6 +39,7 @@ function LeadsPanel() {
   const fetchAdmins = useServerFn(listAdmins);
   const removeAdmin = useServerFn(revokeAdmin);
   const fetchAudit = useServerFn(listAuditLog);
+  const exportAudit = useServerFn(exportAuditLogCsv);
 
   const [tab, setTab] = useState<Tab>("leads");
   const [query, setQuery] = useState("");
@@ -50,6 +51,25 @@ function LeadsPanel() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [lastInviteLink, setLastInviteLink] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [auditAction, setAuditAction] = useState("");
+  const [auditSearch, setAuditSearch] = useState("");
+  const [auditFrom, setAuditFrom] = useState("");
+  const [auditTo, setAuditTo] = useState("");
+  const [debouncedAudit, setDebouncedAudit] = useState({ action: "", search: "", from: "", to: "" });
+
+  useEffect(() => {
+    const t = setTimeout(
+      () =>
+        setDebouncedAudit({
+          action: auditAction.trim(),
+          search: auditSearch.trim(),
+          from: auditFrom,
+          to: auditTo,
+        }),
+      300,
+    );
+    return () => clearTimeout(t);
+  }, [auditAction, auditSearch, auditFrom, auditTo]);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -90,8 +110,17 @@ function LeadsPanel() {
     enabled: isAdmin && tab === "admins",
   });
   const auditQuery = useQuery({
-    queryKey: ["audit"],
-    queryFn: () => fetchAudit({ data: { limit: 200 } }),
+    queryKey: ["audit", debouncedAudit],
+    queryFn: () =>
+      fetchAudit({
+        data: {
+          limit: 200,
+          action: debouncedAudit.action || undefined,
+          search: debouncedAudit.search || undefined,
+          from: debouncedAudit.from ? new Date(debouncedAudit.from).toISOString() : undefined,
+          to: debouncedAudit.to ? new Date(debouncedAudit.to).toISOString() : undefined,
+        },
+      }),
     enabled: isAdmin && tab === "audit",
   });
 
@@ -132,6 +161,26 @@ function LeadsPanel() {
     const a = document.createElement("a");
     a.href = url;
     a.download = `gitmoon-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const onExportAudit = async () => {
+    const { csv } = await exportAudit({
+      data: {
+        action: debouncedAudit.action || undefined,
+        search: debouncedAudit.search || undefined,
+        from: debouncedAudit.from ? new Date(debouncedAudit.from).toISOString() : undefined,
+        to: debouncedAudit.to ? new Date(debouncedAudit.to).toISOString() : undefined,
+      },
+    });
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `gitmoon-audit-${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(a);
     a.click();
     a.remove();
