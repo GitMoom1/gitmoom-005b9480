@@ -1,9 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Moon } from "lucide-react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (s) => z.object({ redirect: z.string().optional() }).parse(s),
   head: () => ({
     meta: [
       { title: "Sign in — GitMoon" },
@@ -16,6 +18,8 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { redirect } = Route.useSearch();
+  const safeRedirect = redirect && redirect.startsWith("/") ? redirect : "/admin/leads";
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,12 +29,12 @@ function AuthPage() {
   useEffect(() => {
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
-      if (mounted && data.session) navigate({ to: "/admin/leads" });
+      if (mounted && data.session) window.location.assign(safeRedirect);
     });
     return () => {
       mounted = false;
     };
-  }, [navigate]);
+  }, [navigate, safeRedirect]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,14 +45,14 @@ function AuthPage() {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/admin/leads` },
+          options: { emailRedirectTo: `${window.location.origin}${safeRedirect}` },
         });
         if (error) throw error;
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      navigate({ to: "/admin/leads" });
+      window.location.assign(safeRedirect);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Authentication failed";
       setError(msg);
