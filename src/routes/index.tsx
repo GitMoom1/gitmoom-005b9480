@@ -475,6 +475,17 @@ release:
               placeholder="you@company.com"
               className="flex-1 rounded-full border border-border bg-background/60 px-5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
             />
+            {/* Honeypot — hidden from real users, tempting to bots */}
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              className="absolute left-[-9999px] top-[-9999px] h-0 w-0 opacity-0"
+              aria-hidden="true"
+            />
             <button
               type="submit"
               disabled={leadStatus === "loading"}
@@ -487,7 +498,7 @@ release:
             <p className="relative mt-4 text-sm text-secondary">Thanks — we'll be in touch shortly.</p>
           )}
           {leadStatus === "error" && (
-            <p className="relative mt-4 text-sm text-destructive">Something went wrong. Please try again.</p>
+            <p className="relative mt-4 text-sm text-destructive">{errorMsg ?? "Something went wrong. Please try again."}</p>
           )}
         </div>
       </section>
