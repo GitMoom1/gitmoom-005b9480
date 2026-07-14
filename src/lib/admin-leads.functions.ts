@@ -12,6 +12,11 @@ async function assertAdmin(context: { supabase: any; userId: string }) {
 
 const SORT_COLUMNS = ["created_at", "email", "source"] as const;
 
+function csvEscape(v: unknown) {
+  const s = v == null ? "" : typeof v === "object" ? JSON.stringify(v) : String(v);
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
 export const listLeads = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
