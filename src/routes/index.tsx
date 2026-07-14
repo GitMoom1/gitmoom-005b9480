@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   GitBranch,
   GitPullRequest,
@@ -123,21 +123,49 @@ function Index() {
   const { theme, toggle } = useTheme();
   const capture = useServerFn(captureLead);
   const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState(""); // honeypot
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const mountedAtRef = useRef<number>(Date.now());
   const [leadStatus, setLeadStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  useEffect(() => {
+    mountedAtRef.current = Date.now();
+  }, []);
 
   const onLeadSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email) return;
     setLeadStatus("loading");
+    setErrorMsg(null);
     track("lead_submit_attempt", { source: "hero_cta_form" });
     try {
-      await capture({ data: { email, source: "landing_cta" } });
-      setLeadStatus("success");
-      track("lead_submit_success", { source: "hero_cta_form" });
-      setEmail("");
+      const res = await capture({
+        data: {
+          email,
+          source: "landing_cta",
+          website,
+          elapsedMs: Date.now() - mountedAtRef.current,
+        },
+      });
+      if (res.ok) {
+        setLeadStatus("success");
+        track("lead_submit_success", { source: "hero_cta_form" });
+        setEmail("");
+      } else {
+        setLeadStatus("error");
+        const msg =
+          res.error === "rate_limited"
+            ? "Too many submissions. Please wait a few seconds and try again."
+            : res.error === "spam_detected" || res.error === "too_fast"
+              ? "Submission blocked. Please try again."
+              : "Something went wrong. Please try again.";
+        setErrorMsg(msg);
+        track("lead_submit_error", { source: "hero_cta_form", reason: res.error });
+      }
     } catch (err) {
       console.error(err);
       setLeadStatus("error");
+      setErrorMsg("Something went wrong. Please try again.");
       track("lead_submit_error", { source: "hero_cta_form" });
     }
   };
