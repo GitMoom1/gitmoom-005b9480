@@ -511,6 +511,58 @@ function LeadsPanel() {
 
       {tab === "audit" && (
         <section className="mt-6">
+          <div className="mb-4 flex flex-wrap items-end gap-2">
+            <div className="flex-1 min-w-[180px]">
+              <label className="mb-1 block text-xs text-muted-foreground">Action contains</label>
+              <input
+                value={auditAction}
+                onChange={(e) => setAuditAction(e.target.value)}
+                placeholder="e.g. admin.invite"
+                className="w-full rounded-lg border border-border bg-background/60 px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div className="flex-1 min-w-[180px]">
+              <label className="mb-1 block text-xs text-muted-foreground">Search target</label>
+              <input
+                value={auditSearch}
+                onChange={(e) => setAuditSearch(e.target.value)}
+                placeholder="target id or type"
+                className="w-full rounded-lg border border-border bg-background/60 px-3 py-2 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">From</label>
+              <input
+                type="datetime-local"
+                value={auditFrom}
+                onChange={(e) => setAuditFrom(e.target.value)}
+                className="rounded-lg border border-border bg-background/60 px-2 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="mb-1 block text-xs text-muted-foreground">To</label>
+              <input
+                type="datetime-local"
+                value={auditTo}
+                onChange={(e) => setAuditTo(e.target.value)}
+                className="rounded-lg border border-border bg-background/60 px-2 py-2 text-sm"
+              />
+            </div>
+            <button
+              onClick={() => {
+                setAuditAction(""); setAuditSearch(""); setAuditFrom(""); setAuditTo("");
+              }}
+              className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent/10"
+            >
+              Clear
+            </button>
+            <button
+              onClick={onExportAudit}
+              className="inline-flex items-center gap-1.5 rounded-lg bg-gradient-cosmic px-3 py-2 text-sm text-primary-foreground shadow-glow hover:opacity-90"
+            >
+              <Download className="h-4 w-4" /> Export CSV
+            </button>
+          </div>
           <div className="overflow-hidden rounded-2xl border border-border">
             <table className="w-full text-sm">
               <thead className="bg-card/60 text-left text-xs uppercase tracking-wider text-muted-foreground">
