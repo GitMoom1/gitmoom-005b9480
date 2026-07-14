@@ -22,6 +22,9 @@ import hero from "@/assets/gitmoon-hero.jpg";
 import { useTheme } from "@/lib/theme";
 import { track } from "@/lib/analytics";
 import { captureLead } from "@/lib/leads.functions";
+import { z } from "zod";
+
+const emailSchema = z.string().trim().toLowerCase().email().max(320);
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -125,6 +128,7 @@ function Index() {
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState(""); // honeypot
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const mountedAtRef = useRef<number>(Date.now());
   const [leadStatus, setLeadStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
@@ -132,16 +136,23 @@ function Index() {
     mountedAtRef.current = Date.now();
   }, []);
 
+  const validEmail = emailSchema.safeParse(email).success;
+
   const onLeadSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email) return;
+    const parsed = emailSchema.safeParse(email);
+    if (!parsed.success) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+    setEmailError(null);
     setLeadStatus("loading");
     setErrorMsg(null);
     track("lead_submit_attempt", { source: "hero_cta_form" });
     try {
       const res = await capture({
         data: {
-          email,
+          email: parsed.data,
           source: "landing_cta",
           website,
           elapsedMs: Date.now() - mountedAtRef.current,
@@ -488,12 +499,15 @@ release:
             />
             <button
               type="submit"
-              disabled={leadStatus === "loading"}
+              disabled={leadStatus === "loading" || !validEmail}
               className="inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-cosmic px-6 py-3 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
             >
               {leadStatus === "loading" ? "Sending…" : "Get started"} <ArrowRight className="h-4 w-4" />
             </button>
           </form>
+          {emailError && (
+            <p className="relative mt-2 text-sm text-destructive">{emailError}</p>
+          )}
           {leadStatus === "success" && (
             <p className="relative mt-4 text-sm text-secondary">Thanks — we'll be in touch shortly.</p>
           )}
