@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import {
   GitBranch,
   GitPullRequest,
   Moon,
+  Sun,
   Sparkles,
   Shield,
   Zap,
@@ -16,6 +19,9 @@ import {
 } from "lucide-react";
 import logo from "@/assets/gitmoon-logo.png";
 import hero from "@/assets/gitmoon-hero.jpg";
+import { useTheme } from "@/lib/theme";
+import { track } from "@/lib/analytics";
+import { captureLead } from "@/lib/leads.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,7 +37,9 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "AI-powered git workflow that automates reviews, merges, and releases.",
       },
+      { property: "og:url", content: "https://gitmoom.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://gitmoom.lovable.app/" }],
   }),
   component: Index,
 });
@@ -112,6 +120,36 @@ const plans = [
 ];
 
 function Index() {
+  const { theme, toggle } = useTheme();
+  const capture = useServerFn(captureLead);
+  const [email, setEmail] = useState("");
+  const [leadStatus, setLeadStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const onLeadSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!email) return;
+    setLeadStatus("loading");
+    track("lead_submit_attempt", { source: "hero_cta_form" });
+    try {
+      await capture({ data: { email, source: "landing_cta" } });
+      setLeadStatus("success");
+      track("lead_submit_success", { source: "hero_cta_form" });
+      setEmail("");
+    } catch (err) {
+      console.error(err);
+      setLeadStatus("error");
+      track("lead_submit_error", { source: "hero_cta_form" });
+    }
+  };
+
+  const onThemeToggle = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    track("theme_toggle", { to: next });
+    toggle();
+  };
+
+  const onCtaClick = (id: string) => track("cta_click", { id });
+
   return (
     <div className="min-h-screen text-foreground">
       {/* Nav */}
@@ -128,11 +166,20 @@ function Index() {
             <a href="#faq" className="transition hover:text-foreground">FAQ</a>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onThemeToggle}
+              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full glass text-foreground transition hover:opacity-80"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             <a href="#" className="hidden text-sm text-muted-foreground transition hover:text-foreground sm:inline">
               Sign in
             </a>
             <a
               href="#cta"
+              onClick={() => onCtaClick("nav_get_started")}
               className="inline-flex items-center gap-1.5 rounded-full bg-gradient-cosmic px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
             >
               Get started <ArrowRight className="h-4 w-4" />
@@ -167,12 +214,14 @@ function Index() {
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
               href="#cta"
+              onClick={() => onCtaClick("hero_start_free")}
               className="inline-flex items-center gap-2 rounded-full bg-gradient-cosmic px-6 py-3 text-base font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
             >
               Start free <ArrowRight className="h-4 w-4" />
             </a>
             <a
               href="#how"
+              onClick={() => onCtaClick("hero_github")}
               className="inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-base font-medium text-foreground transition hover:bg-white/10"
             >
               <Github className="h-4 w-4" /> View on GitHub
@@ -387,21 +436,31 @@ release:
           </p>
           <form
             className="relative mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={onLeadSubmit}
           >
             <input
               type="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={leadStatus === "loading"}
               placeholder="you@company.com"
               className="flex-1 rounded-full border border-border bg-background/60 px-5 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
             />
             <button
               type="submit"
+              disabled={leadStatus === "loading"}
               className="inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-cosmic px-6 py-3 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
             >
-              Get started <ArrowRight className="h-4 w-4" />
+              {leadStatus === "loading" ? "Sending…" : "Get started"} <ArrowRight className="h-4 w-4" />
             </button>
           </form>
+          {leadStatus === "success" && (
+            <p className="relative mt-4 text-sm text-secondary">Thanks — we'll be in touch shortly.</p>
+          )}
+          {leadStatus === "error" && (
+            <p className="relative mt-4 text-sm text-destructive">Something went wrong. Please try again.</p>
+          )}
         </div>
       </section>
 
