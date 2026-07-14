@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { useState } from "react";
 import {
   GitBranch,
   GitPullRequest,
   Moon,
+  Sun,
   Sparkles,
   Shield,
   Zap,
@@ -16,6 +19,9 @@ import {
 } from "lucide-react";
 import logo from "@/assets/gitmoon-logo.png";
 import hero from "@/assets/gitmoon-hero.jpg";
+import { useTheme } from "@/lib/theme";
+import { track } from "@/lib/analytics";
+import { captureLead } from "@/lib/leads.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,7 +37,9 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "AI-powered git workflow that automates reviews, merges, and releases.",
       },
+      { property: "og:url", content: "https://gitmoom.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://gitmoom.lovable.app/" }],
   }),
   component: Index,
 });
