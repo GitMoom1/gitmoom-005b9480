@@ -120,6 +120,36 @@ const plans = [
 ];
 
 function Index() {
+  const { theme, toggle } = useTheme();
+  const capture = useServerFn(captureLead);
+  const [email, setEmail] = useState("");
+  const [leadStatus, setLeadStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const onLeadSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!email) return;
+    setLeadStatus("loading");
+    track("lead_submit_attempt", { source: "hero_cta_form" });
+    try {
+      await capture({ data: { email, source: "landing_cta" } });
+      setLeadStatus("success");
+      track("lead_submit_success", { source: "hero_cta_form" });
+      setEmail("");
+    } catch (err) {
+      console.error(err);
+      setLeadStatus("error");
+      track("lead_submit_error", { source: "hero_cta_form" });
+    }
+  };
+
+  const onThemeToggle = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    track("theme_toggle", { to: next });
+    toggle();
+  };
+
+  const onCtaClick = (id: string) => track("cta_click", { id });
+
   return (
     <div className="min-h-screen text-foreground">
       {/* Nav */}
