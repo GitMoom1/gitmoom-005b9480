@@ -499,12 +499,15 @@ release:
             />
             <button
               type="submit"
-              disabled={leadStatus === "loading"}
+              disabled={leadStatus === "loading" || !validEmail}
               className="inline-flex items-center justify-center gap-1.5 rounded-full bg-gradient-cosmic px-6 py-3 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
             >
               {leadStatus === "loading" ? "Sending…" : "Get started"} <ArrowRight className="h-4 w-4" />
             </button>
           </form>
+          {emailError && (
+            <p className="relative mt-2 text-sm text-destructive">{emailError}</p>
+          )}
           {leadStatus === "success" && (
             <p className="relative mt-4 text-sm text-secondary">Thanks — we'll be in touch shortly.</p>
           )}
