@@ -67,7 +67,6 @@ export const exportLeadsCsv = createServerFn({ method: "GET" })
     await supabaseAdmin.rpc("log_audit", {
       _action: "leads.exported",
       _target_type: "leads",
-      _target_id: null,
       _metadata: { count: rows.length, actor_id: context.userId },
     });
     return { csv, count: rows.length };
