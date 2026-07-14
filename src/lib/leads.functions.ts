@@ -79,5 +79,12 @@ export const captureLead = createServerFn({ method: "POST" })
       return { ok: false, error: "server_error" };
     }
 
+    await supabaseAdmin.rpc("log_audit", {
+      _action: "lead.captured",
+      _target_type: "lead",
+      _target_id: inserted.id,
+      _metadata: { source: data.source ?? null, ip_hash: ipHash },
+    });
+
     return { ok: true, id: inserted.id };
   });
