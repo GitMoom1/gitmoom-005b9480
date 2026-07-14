@@ -166,11 +166,20 @@ function Index() {
             <a href="#faq" className="transition hover:text-foreground">FAQ</a>
           </div>
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onThemeToggle}
+              aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full glass text-foreground transition hover:opacity-80"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             <a href="#" className="hidden text-sm text-muted-foreground transition hover:text-foreground sm:inline">
               Sign in
             </a>
             <a
               href="#cta"
+              onClick={() => onCtaClick("nav_get_started")}
               className="inline-flex items-center gap-1.5 rounded-full bg-gradient-cosmic px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
             >
               Get started <ArrowRight className="h-4 w-4" />
