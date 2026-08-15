@@ -10,7 +10,9 @@ import {
   getOrganization, 
   updateOrganizationSettings,
   getOrganizationRepos, 
-  toggleRepoArchive 
+  toggleRepoArchive,
+  createOrganization,
+  transferRepoToOrg
 } from "@/lib/organizations.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/organizations")({
