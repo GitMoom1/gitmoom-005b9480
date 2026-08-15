@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   GitBranch,
   GitPullRequest,
@@ -23,6 +23,9 @@ import { useTheme } from "@/lib/theme";
 import { track } from "@/lib/analytics";
 import { captureLead } from "@/lib/leads.functions";
 import { z } from "zod";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { supabase } from "@/integrations/supabase/client";
 
 const emailSchema = z.string().trim().toLowerCase().email().max(320);
 
@@ -82,42 +85,66 @@ const features = [
 
 const plans = [
   {
-    name: "Orbit",
-    price: "$0",
+    name: "Orbit (Free)",
+    price: "R$ 0",
     period: "/ forever",
-    desc: "For solo developers and personal projects.",
-    features: ["1 user", "Public repos only", "Basic AI review", "Community support"],
-    cta: "Start free",
+    desc: "Para desenvolvedores solo e projetos pessoais.",
+    features: [
+      "2.500 tokens",
+      "Até 5 repositórios",
+      "Limite de 5 contas por CPF",
+      "Review IA básico",
+    ],
+    priceId: "free",
+    cta: "Começar grátis",
     featured: false,
   },
   {
-    name: "Eclipse",
-    price: "$19",
-    period: "/ user / mo",
-    desc: "For growing teams shipping every day.",
+    name: "Eclipse (Básico)",
+    price: "R$ 19,90",
+    period: "/ mês",
+    desc: "Para times em crescimento enviando código todo dia.",
     features: [
-      "Unlimited repos",
-      "Advanced AI review",
-      "Merge queue",
-      "Policy engine",
-      "Priority support",
+      "7.500 tokens",
+      "Até 20 repositórios",
+      "Suporte básico",
+      "Histórico de 30 dias",
+      "Review IA avançado",
     ],
-    cta: "Start 14-day trial",
+    priceId: "gitmoon_basic_monthly",
+    cta: "Assinar Básico",
     featured: true,
   },
   {
-    name: "Galaxy",
-    price: "Custom",
-    period: "",
-    desc: "For enterprises with security and scale requirements.",
+    name: "Galaxy (Pro)",
+    price: "R$ 49,99",
+    period: "/ mês",
+    desc: "Para profissionais e times que precisam de escala.",
     features: [
-      "SSO & SCIM",
-      "Self-hosted runners",
-      "Audit logs",
-      "Dedicated SLA",
-      "Solution architect",
+      "15.000 tokens",
+      "Até 40 repositórios",
+      "Suporte prioritário",
+      "Histórico ilimitado",
+      "Exportação de dados",
     ],
-    cta: "Talk to sales",
+    priceId: "gitmoon_pro_monthly",
+    cta: "Assinar Pro",
+    featured: false,
+  },
+  {
+    name: "Supernova (Enterprise)",
+    price: "R$ 79,00",
+    period: "/ mês",
+    desc: "Para empresas com requisitos de segurança e escala.",
+    features: [
+      "30.000 tokens",
+      "Até 100 repositórios",
+      "API dedicada",
+      "SSO & Múltiplos usuários",
+      "Relatórios avançados",
+    ],
+    priceId: "gitmoon_enterprise_monthly",
+    cta: "Assinar Enterprise",
     featured: false,
   },
 ];
@@ -131,9 +158,12 @@ function Index() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const mountedAtRef = useRef<number>(Date.now());
   const [leadStatus, setLeadStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     mountedAtRef.current = Date.now();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 
   const validEmail = emailSchema.safeParse(email).success;
@@ -191,6 +221,7 @@ function Index() {
 
   return (
     <div className="min-h-screen text-foreground">
+      <PaymentTestModeBanner />
       {/* Nav */}
       <header className="sticky top-0 z-50 glass">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -425,8 +456,21 @@ release:
                   </li>
                 ))}
               </ul>
-              <a
-                href="#cta"
+              <button
+                type="button"
+                onClick={() => {
+                  if (p.priceId === "free") {
+                    window.location.hash = "cta";
+                  } else {
+                    openCheckout({
+                      priceId: p.priceId,
+                      quantity: 1,
+                      customerEmail: user?.email,
+                      userId: user?.id,
+                      returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+                    });
+                  }
+                }}
                 className={`mt-8 inline-flex w-full items-center justify-center gap-1.5 rounded-full px-5 py-3 text-sm font-medium transition ${
                   p.featured
                     ? "bg-background text-foreground hover:bg-background/90"
@@ -434,10 +478,11 @@ release:
                 }`}
               >
                 {p.cta} <ArrowRight className="h-4 w-4" />
-              </a>
+              </button>
             </div>
           ))}
         </div>
+        {checkoutElement}
       </section>
 
       {/* Testimonial */}
