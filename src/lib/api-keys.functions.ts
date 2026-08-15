@@ -36,7 +36,7 @@ export const createApiKey = createServerFn({ method: "POST" })
 
     if (error) throw error;
 
-    return { ...apiKey, rawKey }; // Return raw key only once
+    return Object.assign({}, apiKey, { rawKey }); // Return raw key only once
   });
 
 export const listApiKeys = createServerFn({ method: "GET" })
