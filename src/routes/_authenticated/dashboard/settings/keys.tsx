@@ -71,7 +71,7 @@ function KeysPage() {
             />
             <Button type="submit">
               <Plus className="h-4 w-4 mr-2" /> Add Key
-            </li>
+            </Button>
           </form>
         </CardContent>
       </Card>
