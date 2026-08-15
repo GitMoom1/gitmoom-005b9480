@@ -3,7 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { 
   User, Book, Star, GitBranch, 
   Users, Building, Heart, Settings,
-  LogOut, Plus, Moon, Sun, Key, RefreshCw
+  LogOut, Plus, Moon, Sun, Key, RefreshCw, Shield, Terminal
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "@/lib/theme";
@@ -27,6 +27,8 @@ export function DashboardSidebar({ user, activeTab }: DashboardSidebarProps) {
     { id: "sponsors", icon: Heart, label: "Sponsors", to: "/dashboard" },
     { id: "api-keys", icon: Key, label: "API Keys", to: "/_authenticated/dashboard/settings/api-keys" },
     { id: "integrations", icon: RefreshCw, label: "Integrations", to: "/_authenticated/dashboard/settings/integrations" },
+    { id: "secrets", icon: Shield, label: "Secrets", to: "/_authenticated/dashboard/settings/secrets" },
+    { id: "keys", icon: Terminal, label: "SSH & GPG Keys", to: "/_authenticated/dashboard/settings/keys" },
   ];
 
   const handleSignOut = async () => {
