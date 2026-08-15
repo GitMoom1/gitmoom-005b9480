@@ -164,6 +164,8 @@ function Index() {
   const [leadStatus, setLeadStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const { openCheckout, checkoutElement } = useStripeCheckout();
   const [user, setUser] = useState<any>(null);
+  const [billingInterval, setBillingInterval] = useState<"MONTHLY" | "YEARLY">("MONTHLY");
+
 
   useEffect(() => {
     mountedAtRef.current = Date.now();
