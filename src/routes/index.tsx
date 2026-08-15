@@ -562,6 +562,109 @@ release:
         </div>
       </section>
 
+      {/* Roadmap / Architecture Section */}
+      <section id="roadmap" className="mx-auto max-w-7xl px-6 py-24 md:py-32 border-t border-border/40">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-4xl font-semibold tracking-tight md:text-5xl text-center mb-16">
+            Technical <span className="text-gradient">Roadmap.</span>
+          </h2>
+          
+          <div className="space-y-16">
+            <div className="glass rounded-3xl p-8 md:p-12">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-gradient-cosmic flex items-center justify-center text-primary-foreground">
+                  <Bot className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-semibold">DeepSeek AI Agent</h3>
+                  <p className="text-muted-foreground">Autonomous Software Engineer Integration</p>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-8 text-sm">
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-foreground uppercase tracking-wider">Capabilities</h4>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary mt-0.5" />
+                      Continuous vulnerability scanning
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary mt-0.5" />
+                      Root cause analysis for pipeline failures
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary mt-0.5" />
+                      Automated `ai-fix/*` branch generation
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary mt-0.5" />
+                      Real-time interactive approval flow
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-background/40 rounded-xl p-6 font-mono text-[10px] leading-tight">
+                  <div className="text-muted-foreground mb-2"># Scan Frequency by Plan</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <span className="text-primary">Free:</span> <span>Every 6 hours</span>
+                    <span className="text-primary">Basic:</span> <span>Every 2 hours</span>
+                    <span className="text-primary">Pro:</span> <span>Every 30 mins</span>
+                    <span className="text-primary">Enterprise:</span> <span>Real-time</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="glass rounded-3xl p-8 md:p-12">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="h-12 w-12 rounded-2xl bg-gradient-cosmic flex items-center justify-center text-primary-foreground">
+                  <Zap className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="text-2xl font-semibold">Distributed CI/CD</h3>
+                  <p className="text-muted-foreground">High-performance Pipeline Infrastructure</p>
+                </div>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-8 text-sm">
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-foreground uppercase tracking-wider">Architecture</h4>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary mt-0.5" />
+                      High-performance Go-based runners
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary mt-0.5" />
+                      Redis-backed intelligent job queuing
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary mt-0.5" />
+                      Automatic runner scaling on K8s
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-primary mt-0.5" />
+                      Real-time log streaming via WebSockets
+                    </li>
+                  </ul>
+                </div>
+                <div className="bg-background/40 rounded-xl p-6 font-mono text-[10px] leading-tight overflow-hidden">
+                  <div className="text-secondary mb-2">CREATE TABLE runners (</div>
+                  <div className="pl-4 space-y-1">
+                    <div>id UUID PRIMARY KEY,</div>
+                    <div>name VARCHAR(255),</div>
+                    <div>type CHECK (type IN ('shared','private')),</div>
+                    <div>status DEFAULT 'offline',</div>
+                    <div>last_heartbeat_at TIMESTAMP</div>
+                  </div>
+                  <div className="text-secondary mt-1">);</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="border-t border-border/40">
         <div className="mx-auto max-w-7xl px-6 py-12">
@@ -588,3 +691,4 @@ release:
     </div>
   );
 }
+
