@@ -9,7 +9,8 @@ import {
   Building2, Plus, ArrowRightLeft, 
   ShieldCheck, Zap, ExternalLink, 
   MoreHorizontal, Users as UsersIcon,
-  Search, Crown, AlertTriangle
+  Search, Crown, AlertTriangle,
+  Book
 } from "lucide-react";
 import { createOrganization, transferRepository } from "@/lib/organizations.functions";
 
