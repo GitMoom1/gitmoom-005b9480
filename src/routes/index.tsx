@@ -221,6 +221,7 @@ function Index() {
 
   return (
     <div className="min-h-screen text-foreground">
+      <PaymentTestModeBanner />
       {/* Nav */}
       <header className="sticky top-0 z-50 glass">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -455,8 +456,21 @@ release:
                   </li>
                 ))}
               </ul>
-              <a
-                href="#cta"
+              <button
+                type="button"
+                onClick={() => {
+                  if (p.priceId === "free") {
+                    window.location.hash = "cta";
+                  } else {
+                    openCheckout({
+                      priceId: p.priceId,
+                      quantity: 1,
+                      customerEmail: user?.email,
+                      userId: user?.id,
+                      returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+                    });
+                  }
+                }}
                 className={`mt-8 inline-flex w-full items-center justify-center gap-1.5 rounded-full px-5 py-3 text-sm font-medium transition ${
                   p.featured
                     ? "bg-background text-foreground hover:bg-background/90"
@@ -464,10 +478,11 @@ release:
                 }`}
               >
                 {p.cta} <ArrowRight className="h-4 w-4" />
-              </a>
+              </button>
             </div>
           ))}
         </div>
+        {checkoutElement}
       </section>
 
       {/* Testimonial */}
