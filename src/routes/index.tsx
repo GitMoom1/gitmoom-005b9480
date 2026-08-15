@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   GitBranch,
   GitPullRequest,
@@ -23,6 +23,9 @@ import { useTheme } from "@/lib/theme";
 import { track } from "@/lib/analytics";
 import { captureLead } from "@/lib/leads.functions";
 import { z } from "zod";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
+import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
+import { supabase } from "@/integrations/supabase/client";
 
 const emailSchema = z.string().trim().toLowerCase().email().max(320);
 
