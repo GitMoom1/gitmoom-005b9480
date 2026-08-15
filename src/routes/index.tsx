@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-// A criação de login e o login ainda não estão funcionando, arrume os
+// olha o login ainda não finciona e nem a criação dele, faça uma auditoria e veja a onde esta o erro e arrume o
+//
+// IMPORTANTE: Execute TODOS os detalhes desta tarefa com máxima precisão. Não ignore nada, não simplifique, implemente EXATAMENTE o que foi pedido.
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
