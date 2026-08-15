@@ -33,7 +33,6 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
   const periodStart = item?.current_period_start ?? subscription.current_period_start;
   const periodEnd = item?.current_period_end ?? subscription.current_period_end;
 
-  // Using any to bypass type errors until database migration is fully verified and types regenerated
   const supabase = getSupabase() as any;
   await supabase.from("subscriptions").upsert(
     {
