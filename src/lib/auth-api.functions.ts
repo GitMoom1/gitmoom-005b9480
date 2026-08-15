@@ -11,7 +11,7 @@ export const validateApiKey = createServerFn({ method: "POST" })
     
     const { data: apiKey, error } = await supabaseAdmin
       .from("api_keys" as any)
-      .select("*, user:auth.users(*)")
+      .select("*")
       .eq("hashed_key", hashedKey)
       .eq("status", "ACTIVE")
       .single();
@@ -20,17 +20,19 @@ export const validateApiKey = createServerFn({ method: "POST" })
       return { valid: false, error: "Invalid or revoked API key" };
     }
 
+    const keyData = apiKey as Record<string, any>;
+
     // Check expiry
-    if (apiKey.expires_at && new Date(apiKey.expires_at) < new Date()) {
+    if (keyData.expires_at && new Date(keyData.expires_at) < new Date()) {
       return { valid: false, error: "API key expired" };
     }
 
-    // Enforce rate limiting logic here in a real app
-    // ...
+    // Get user separately to avoid join parsing issues
+    const { data: { user } } = await supabaseAdmin.auth.admin.getUserById(keyData.user_id);
 
     return { 
       valid: true, 
-      user: apiKey.user,
-      scopes: apiKey.scopes 
+      user: user,
+      scopes: keyData.scopes 
     };
   });
