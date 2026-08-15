@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
+import { RepositoryList } from "@/components/RepositoryList";
 import { supabase } from "@/integrations/supabase/client";
-import { Book, Star, GitBranch, Search, Filter, GitMerge, Clock } from "lucide-react";
+import { Book, Star, GitBranch, Search, Filter, GitMerge, Clock, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
