@@ -9,11 +9,10 @@ const apiKeySchema = z.object({
 
 export const createApiKey = createServerFn({ method: "POST" })
   .inputValidator((data) => apiKeySchema.parse(data))
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { randomBytes, createHash } = await import("crypto");
     
-    // In a real app, we'd get the user from context/auth
     const { data: { user } } = await supabaseAdmin.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 
@@ -36,7 +35,12 @@ export const createApiKey = createServerFn({ method: "POST" })
 
     if (error) throw error;
 
-    return Object.assign({}, apiKey, { rawKey }); // Return raw key only once
+    // Use type assertion or casting to avoid spread errors with unknown types
+    const result = (apiKey as Record<string, any>);
+    return {
+      ...result,
+      rawKey
+    };
   });
 
 export const listApiKeys = createServerFn({ method: "GET" })
@@ -53,7 +57,7 @@ export const listApiKeys = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return keys;
+    return (keys as any[]);
   });
 
 export const revokeApiKey = createServerFn({ method: "POST" })
