@@ -1,49 +1,47 @@
-# Plan - GitMoon Pricing & Backend Architecture
+# Plan - GitMoon Organization & Transfer Architecture
 
-Implement the full backend for pricing plans, token usage tracking, Stripe integration, and the technical roadmap sections (CI/CD & DeepSeek AI Agent).
+Implement organized pages for GitMoon including organizations management and repository transfer logic tied to pricing plans.
 
 ## User Review Required
 
 > [!IMPORTANT]
-> The CPF limit logic uses a salted SHA-256 hash to identify individuals without storing sensitive personal data (CPF). This ensures privacy compliance while enforcing the 5-account limit.
+> Repository transfer between organizations or accounts will be restricted to users on paid plans (Eclipse, Galaxy, Supernova). Free users (Orbit) can create organizations but cannot move existing repos into them.
 
-- **Pricing Tiers**:
-    - **Orbit (Free)**: 2.5k tokens, 5 repos (Limit 5 accounts per person).
-    - **Eclipse (Basic)**: 7.5k tokens, 20 repos, R$ 19,90/month.
-    - **Galaxy (Pro)**: 15k tokens, 40 repos, R$ 49,99/month.
-    - **Supernova (Enterprise)**: 30k tokens, 100 repos, R$ 79,00/month.
-- **Token Model**: Fair usage with pre-reservation and settlement based on actual model consumption.
-- **Stripe**: Embedded checkout with automatic tax calculation for Brazil.
-- **AI Agent (DeepSeek)**: Continuous monitoring, automated patching (with client approval), and plan-based scan intervals.
+- **Organization Management**: Users can create organizations to group repositories.
+- **Repository Transfer**: Move repositories between accounts or organizations.
+- **Plan Enforcement**: Validation logic to ensure transfers are only allowed for paid tiers.
+- **UI Refresh**: Modern, organized dashboard for managing these entities.
 
 ## Technical Details
 
-### Database Schema (Supabase)
-1.  **`plans`**: Catalog of available plans and their metadata (tokens, repo limit, price).
-2.  **`profiles`**: Extended user data including current `plan_id`, `tokens_remaining`, `tokens_held` (reserved), and `plan_expires_at`.
-3.  **`repositories`**: Table to store user repos with a check function for plan limits.
-4.  **`token_ledger`**: Immutable log of all token transactions (reserve, settle, grant).
-5.  **`free_accounts_control`**: Stores hashed CPF identifiers to enforce the 5-account limit per person.
-6.  **`ai_detected_errors`**: Tracks errors found by the DeepSeek Agent.
-7.  **`runners`**: CI/CD runner management (shared, private, self-hosted).
+### Database Schema Updates (Supabase)
+1. **`organizations`**: 
+   - `id` UUID PRIMARY KEY
+   - `name` TEXT NOT NULL
+   - `slug` TEXT UNIQUE NOT NULL
+   - `owner_id` UUID REFERENCES profiles(id)
+   - `created_at` TIMESTAMPTZ
+2. **`organization_members`**:
+   - `org_id` UUID REFERENCES organizations(id)
+   - `user_id` UUID REFERENCES profiles(id)
+   - `role` app_role (admin, member)
+3. **Update `repositories`**:
+   - Add `organization_id` UUID NULL REFERENCES organizations(id)
+   - Add RLS to allow access by org members.
 
-### Architecture & Roadmap
-1.  **Núcleo do Sistema**:
-    - **Modelagem de Dados**: Gerenciamento robusto de usuários, permissões, repositórios e tokens. Organização estilo GitHub (Owner/Member).
-    - **Mecanismo de Tokens**: Validação de saldo pré-ação. Validação de 5 contas por CPF no cadastro.
-2.  **Arquitetura de Processamento**:
-    - **Pipeline de Eventos (Inspirado em Kafka)**: Desacoplamento via eventos para ações críticas.
-    - **Workers Especializados**: Processamento assíncrono para repositórios, pagamentos e notificações.
-3.  **Coração do Git**:
-    - **Gitaly/Workhorse Style**: Abstração de operações Git e proxy inteligente para tráfego pesado.
-4.  **Agente de IA (DeepSeek)**:
-    - **Monitoramento Contínuo**: Scans periódicos (6h free -> realtime enterprise).
-    - **Correção Autônoma**: Geração de patches e branches `ai-fix/*` com pedido de autorização por e-mail.
+### Business Logic (Server Functions)
+1. **`createOrganization`**: Create new org and assign owner.
+2. **`transferRepository`**: 
+   - Check if source owner has a paid plan.
+   - Update `owner_id` or `organization_id`.
+   - Log the transfer in `audit_log`.
 
-### Implementation Steps
-1.  **Resurrection**: Confirm Supabase is active.
-2.  **Migration**: Apply SQL schema for all new tables and RLS policies.
-3.  **UI Updates**: 
-    - Add a "Roadmap" section to `src/routes/index.tsx` explaining the architecture, CI/CD, and AI Agent features.
-    - Integrate Stripe checkout flows.
-4.  **Email Hook**: Connect the email domain `notify.kubovibe.dev` to the AI Agent notification system.
+### UI Components
+1. **`/admin/organizations`**: Dashboard for managing orgs.
+2. **Transfer Modal**: Interface to select target owner/org.
+
+## Implementation Steps
+1. **Migration**: Create `organizations` and `organization_members` tables. Add `organization_id` to `repositories`.
+2. **Auth & Roles**: Extend `has_role` or create `is_org_admin` for granular control.
+3. **Server Functions**: Implement the transfer and creation logic with plan checks.
+4. **UI Integration**: Add organization management to the dashboard.
