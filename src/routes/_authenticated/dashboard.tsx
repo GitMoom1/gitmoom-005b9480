@@ -66,7 +66,7 @@ function Dashboard() {
 
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row gap-8">
-          <DashboardSidebar user={user} activeTab={activeTab} />
+          <DashboardSidebar user={user} activeTab={currentTab} />
 
           <main className="flex-1 space-y-6">
             {isRootDashboard ? (
