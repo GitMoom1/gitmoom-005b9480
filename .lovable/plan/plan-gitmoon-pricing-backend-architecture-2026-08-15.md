@@ -1,6 +1,6 @@
 # Plan - GitMoon Pricing & Backend Architecture
 
-Implement the full backend for pricing plans, token usage tracking, and Stripe integration.
+Implement the full backend for pricing plans, token usage tracking, Stripe integration, and the technical roadmap sections (CI/CD & DeepSeek AI Agent).
 
 ## User Review Required
 
@@ -14,6 +14,7 @@ Implement the full backend for pricing plans, token usage tracking, and Stripe i
     - **Supernova (Enterprise)**: 30k tokens, 100 repos, R$ 79,00/month.
 - **Token Model**: Fair usage with pre-reservation and settlement based on actual model consumption.
 - **Stripe**: Embedded checkout with automatic tax calculation for Brazil.
+- **AI Agent (DeepSeek)**: Continuous monitoring, automated patching (with client approval), and plan-based scan intervals.
 
 ## Technical Details
 
@@ -23,9 +24,10 @@ Implement the full backend for pricing plans, token usage tracking, and Stripe i
 3.  **`repositories`**: Table to store user repos with a check function for plan limits.
 4.  **`token_ledger`**: Immutable log of all token transactions (reserve, settle, grant).
 5.  **`free_accounts_control`**: Stores hashed CPF identifiers to enforce the 5-account limit per person.
-6.  **`subscriptions`**: Tracks Stripe subscription status and maps back to plans.
+6.  **`ai_detected_errors`**: Tracks errors found by the DeepSeek Agent.
+7.  **`runners`**: CI/CD runner management (shared, private, self-hosted).
 
-### Architecture & Roadmap (As requested)
+### Architecture & Roadmap
 1.  **Núcleo do Sistema**:
     - **Modelagem de Dados**: Gerenciamento robusto de usuários, permissões, repositórios e tokens. Organização estilo GitHub (Owner/Member).
     - **Mecanismo de Tokens**: Validação de saldo pré-ação. Validação de 5 contas por CPF no cadastro.
@@ -34,8 +36,14 @@ Implement the full backend for pricing plans, token usage tracking, and Stripe i
     - **Workers Especializados**: Processamento assíncrono para repositórios, pagamentos e notificações.
 3.  **Coração do Git**:
     - **Gitaly/Workhorse Style**: Abstração de operações Git e proxy inteligente para tráfego pesado.
-4.  **Tecnologias**: Ruby on Rails (Web), Go (Performance), PostgreSQL (DB), Redis (Cache/Filas), Kubernetes (Orquestração).
+4.  **Agente de IA (DeepSeek)**:
+    - **Monitoramento Contínuo**: Scans periódicos (6h free -> realtime enterprise).
+    - **Correção Autônoma**: Geração de patches e branches `ai-fix/*` com pedido de autorização por e-mail.
 
-### UI Changes
-- Update `src/routes/index.tsx` to include the detailed architecture roadmap.
-- Integrate `useStripeCheckout` to launch the payment flow directly from the pricing table.
+### Implementation Steps
+1.  **Resurrection**: Confirm Supabase is active.
+2.  **Migration**: Apply SQL schema for all new tables and RLS policies.
+3.  **UI Updates**: 
+    - Add a "Roadmap" section to `src/routes/index.tsx` explaining the architecture, CI/CD, and AI Agent features.
+    - Integrate Stripe checkout flows.
+4.  **Email Hook**: Connect the email domain `notify.kubovibe.dev` to the AI Agent notification system.
