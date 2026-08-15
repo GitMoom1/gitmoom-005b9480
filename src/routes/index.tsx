@@ -233,6 +233,7 @@ function Index() {
             <a href="#features" className="transition hover:text-foreground">Features</a>
             <a href="#how" className="transition hover:text-foreground">How it works</a>
             <a href="#pricing" className="transition hover:text-foreground">Pricing</a>
+            <a href="/admin/organizations" className="transition hover:text-foreground">Organizations</a>
             <a href="#roadmap" className="transition hover:text-foreground">Roadmap</a>
           </div>
           <div className="flex items-center gap-3">
