@@ -19,6 +19,8 @@ import { Route as AuthenticatedAdminOrganizationsRouteImport } from './routes/_a
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as AuthenticatedDashboardSettingsSecretsRouteImport } from './routes/_authenticated/dashboard/settings/secrets'
+import { Route as AuthenticatedDashboardSettingsKeysRouteImport } from './routes/_authenticated/dashboard/settings/keys'
 import { Route as AuthenticatedDashboardSettingsIntegrationsRouteImport } from './routes/_authenticated/dashboard/settings/integrations'
 import { Route as AuthenticatedDashboardSettingsApiKeysRouteImport } from './routes/_authenticated/dashboard/settings/api-keys'
 
@@ -74,6 +76,18 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedDashboardSettingsSecretsRoute =
+  AuthenticatedDashboardSettingsSecretsRouteImport.update({
+    id: '/settings/secrets',
+    path: '/settings/secrets',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardSettingsKeysRoute =
+  AuthenticatedDashboardSettingsKeysRouteImport.update({
+    id: '/settings/keys',
+    path: '/settings/keys',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardSettingsIntegrationsRoute =
   AuthenticatedDashboardSettingsIntegrationsRouteImport.update({
     id: '/settings/integrations',
@@ -97,6 +111,8 @@ export interface FileRoutesByFullPath {
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
+  '/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
+  '/dashboard/settings/secrets': typeof AuthenticatedDashboardSettingsSecretsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -110,6 +126,8 @@ export interface FileRoutesByTo {
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
+  '/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
+  '/dashboard/settings/secrets': typeof AuthenticatedDashboardSettingsSecretsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -125,6 +143,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/_authenticated/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/_authenticated/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
+  '/_authenticated/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
+  '/_authenticated/dashboard/settings/secrets': typeof AuthenticatedDashboardSettingsSecretsRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
@@ -140,6 +160,8 @@ export interface FileRouteTypes {
     | '/admin/organizations'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/integrations'
+    | '/dashboard/settings/keys'
+    | '/dashboard/settings/secrets'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
@@ -153,6 +175,8 @@ export interface FileRouteTypes {
     | '/admin/organizations'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/integrations'
+    | '/dashboard/settings/keys'
+    | '/dashboard/settings/secrets'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
   id:
@@ -167,6 +191,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/organizations'
     | '/_authenticated/dashboard/settings/api-keys'
     | '/_authenticated/dashboard/settings/integrations'
+    | '/_authenticated/dashboard/settings/keys'
+    | '/_authenticated/dashboard/settings/secrets'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
@@ -253,6 +279,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard/settings/secrets': {
+      id: '/_authenticated/dashboard/settings/secrets'
+      path: '/settings/secrets'
+      fullPath: '/dashboard/settings/secrets'
+      preLoaderRoute: typeof AuthenticatedDashboardSettingsSecretsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/settings/keys': {
+      id: '/_authenticated/dashboard/settings/keys'
+      path: '/settings/keys'
+      fullPath: '/dashboard/settings/keys'
+      preLoaderRoute: typeof AuthenticatedDashboardSettingsKeysRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
     '/_authenticated/dashboard/settings/integrations': {
       id: '/_authenticated/dashboard/settings/integrations'
       path: '/settings/integrations'
@@ -273,6 +313,8 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardSettingsApiKeysRoute: typeof AuthenticatedDashboardSettingsApiKeysRoute
   AuthenticatedDashboardSettingsIntegrationsRoute: typeof AuthenticatedDashboardSettingsIntegrationsRoute
+  AuthenticatedDashboardSettingsKeysRoute: typeof AuthenticatedDashboardSettingsKeysRoute
+  AuthenticatedDashboardSettingsSecretsRoute: typeof AuthenticatedDashboardSettingsSecretsRoute
 }
 
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
@@ -281,6 +323,10 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
       AuthenticatedDashboardSettingsApiKeysRoute,
     AuthenticatedDashboardSettingsIntegrationsRoute:
       AuthenticatedDashboardSettingsIntegrationsRoute,
+    AuthenticatedDashboardSettingsKeysRoute:
+      AuthenticatedDashboardSettingsKeysRoute,
+    AuthenticatedDashboardSettingsSecretsRoute:
+      AuthenticatedDashboardSettingsSecretsRoute,
   }
 
 const AuthenticatedDashboardRouteWithChildren =
