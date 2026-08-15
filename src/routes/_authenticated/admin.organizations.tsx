@@ -6,7 +6,12 @@ import {
   Archive, Settings, Users, Plus, 
   Eye, EyeOff, Search, Save, Shield, Clock, Copy
 } from "lucide-react";
-import { getOrganization, updateOrganizationSettings } from "@/lib/organizations.functions";
+import { 
+  getOrganization, 
+  updateOrganizationSettings,
+  getOrganizationRepos, 
+  toggleRepoArchive 
+} from "@/lib/organizations.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/organizations")({
   component: OrganizationManager,
@@ -311,4 +316,4 @@ function SettingsView({ org, onSave, isSaving }: { org: any, onSave: (s: any) =>
     </div>
   );
 }
-import { getOrganizationRepos, toggleRepoArchive } from "@/lib/organizations.functions";
+
