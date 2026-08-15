@@ -28,6 +28,8 @@ import { z } from "zod";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
+import { PricingPlans } from "@/components/PricingPlans";
+
 
 const emailSchema = z.string().trim().toLowerCase().email().max(320);
 
