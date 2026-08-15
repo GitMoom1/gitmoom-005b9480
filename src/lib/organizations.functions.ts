@@ -5,8 +5,8 @@ export const getOrganization = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ slug: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: org, error } = await supabaseAdmin
-      .from("organizations")
+    const { data: org, error } = await (supabaseAdmin
+      .from("organizations" as any)
       .select(`
         *,
         organization_settings (*),
@@ -15,7 +15,7 @@ export const getOrganization = createServerFn({ method: "GET" })
         )
       `)
       .eq("slug", data.slug)
-      .single();
+      .single() as any);
 
     if (error) throw new Error(error.message);
     return org;
@@ -33,7 +33,7 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let query = supabaseAdmin
-      .from("repositories")
+      .from("repositories" as any)
       .select("*")
       .eq("organization_id", data.orgId);
 
@@ -62,7 +62,7 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
         break;
     }
 
-    const { data: repos, error } = await query;
+    const { data: repos, error } = await (query as any);
     if (error) throw new Error(error.message);
     return repos;
   });
@@ -77,10 +77,10 @@ export const updateOrganizationSettings = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
-      .from("organization_settings")
+    const { error } = await (supabaseAdmin
+      .from("organization_settings" as any)
       .update(data.settings)
-      .eq("organization_id", data.orgId);
+      .eq("organization_id", data.orgId) as any);
 
     if (error) throw new Error(error.message);
     return { success: true };
@@ -96,10 +96,10 @@ export const toggleRepoArchive = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
-      .from("repositories")
-      .update({ is_archived: data.archived })
-      .eq("id", data.repoId);
+    const { error } = await (supabaseAdmin
+      .from("repositories" as any)
+      .update({ is_archived: data.archived } as any)
+      .eq("id", data.repoId) as any);
 
     if (error) throw new Error(error.message);
     return { success: true };
