@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -16,6 +16,8 @@ import {
   ArrowRight,
   Star,
   Github,
+  LayoutDashboard,
+  Users
 } from "lucide-react";
 import logo from "@/assets/gitmoon-logo.png";
 import hero from "@/assets/gitmoon-hero.jpg";
