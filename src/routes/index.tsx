@@ -443,70 +443,44 @@ release:
             Pricing that <span className="text-gradient">scales with you.</span>
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            From solo hackers to Fortune 500. Free for open source, forever.
+            From solo hackers to professional teams. Choose the plan that fits your needs.
           </p>
-        </div>
-        <div className="mt-16 grid gap-6 lg:grid-cols-3">
-          {plans.map((p) => (
-            <div
-              key={p.name}
-              className={`relative rounded-2xl p-8 transition ${
-                p.featured
-                  ? "bg-gradient-cosmic text-primary-foreground shadow-glow"
-                  : "glass hover:-translate-y-1"
-              }`}
+          
+          <div className="mt-8 flex justify-center gap-4">
+            <button 
+              onClick={() => setBillingInterval("MONTHLY")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition ${billingInterval === "MONTHLY" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
             >
-              {p.featured && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-background px-3 py-1 text-xs font-medium text-foreground">
-                  Most popular
-                </div>
-              )}
-              <h3 className="text-xl font-semibold">{p.name}</h3>
-              <div className="mt-4 flex items-baseline gap-1">
-                <span className="text-4xl font-bold">{p.price}</span>
-                <span className={p.featured ? "text-primary-foreground/80" : "text-muted-foreground"}>
-                  {p.period}
-                </span>
-              </div>
-              <p className={`mt-2 text-sm ${p.featured ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-                {p.desc}
-              </p>
-              <ul className="mt-6 space-y-3 text-sm">
-                {p.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <button
-                type="button"
-                onClick={() => {
-                  if (p.priceId === "free") {
-                    window.location.hash = "cta";
-                  } else {
-                    openCheckout({
-                      priceId: p.priceId,
-                      quantity: 1,
-                      customerEmail: user?.email,
-                      userId: user?.id,
-                      returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
-                    });
-                  }
-                }}
-                className={`mt-8 inline-flex w-full items-center justify-center gap-1.5 rounded-full px-5 py-3 text-sm font-medium transition ${
-                  p.featured
-                    ? "bg-background text-foreground hover:bg-background/90"
-                    : "bg-gradient-cosmic text-primary-foreground hover:opacity-90"
-                }`}
-              >
-                {p.cta} <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
+              Mensal
+            </button>
+            <button 
+              onClick={() => setBillingInterval("YEARLY")}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition ${billingInterval === "YEARLY" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+            >
+              Anual (Save 20%)
+            </button>
+          </div>
         </div>
+
+        <PricingPlans 
+          billingInterval={billingInterval}
+          onSelectPlan={(p) => {
+            if (p.priceId === "free") {
+              window.location.hash = "cta";
+            } else {
+              openCheckout({
+                priceId: p.priceId,
+                quantity: 1,
+                customerEmail: user?.email,
+                userId: user?.id,
+                returnUrl: `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
+              });
+            }
+          }} 
+        />
         {checkoutElement}
       </section>
+
 
       {/* Testimonial */}
       <section className="border-y border-border/40 bg-card/30">
