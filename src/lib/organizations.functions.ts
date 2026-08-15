@@ -25,13 +25,9 @@ export const createOrganization = createServerFn({ method: "POST" })
 
     if (error) throw error;
 
-    // Add owner as admin member
-    await (supabase as any).from("organization_members").insert({
-      org_id: org.id,
-      user_id: userId,
-      role: "admin",
-    });
-
+    // The database trigger "on_organization_created" already adds the owner as a member.
+    // We don't need to do it here manually to avoid race conditions or duplicates.
+    
     return { id: org.id };
   });
 
