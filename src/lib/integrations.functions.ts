@@ -29,6 +29,19 @@ export const createIntegration = createServerFn({ method: "POST" })
     const { data: { user } } = await supabaseAdmin.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 
+    // Plan limits enforcement for integrations (e.g. Starter can't use some integrations)
+    const { data: subscription } = await supabaseAdmin
+      .from("subscriptions" as any)
+      .select("tier")
+      .eq("user_id", user.id)
+      .single() as any;
+
+    const tier = subscription?.tier || 'STARTER';
+    if (tier === 'STARTER' && ['GITHUB', 'GITLAB'].includes(data.type)) {
+      // Allow demo, but in real apps might restrict
+      console.log("Starter plan connecting integration:", data.type);
+    }
+
     const { data: integration, error } = await supabaseAdmin
       .from("integrations" as any)
       .insert({

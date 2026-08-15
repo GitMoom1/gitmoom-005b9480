@@ -16,6 +16,25 @@ export const createApiKey = createServerFn({ method: "POST" })
     const { data: { user } } = await supabaseAdmin.auth.getUser();
     if (!user) throw new Error("Unauthorized");
 
+    // Plan limits enforcement
+    const { data: subscription } = await supabaseAdmin
+      .from("subscriptions" as any)
+      .select("tier")
+      .eq("user_id", user.id)
+      .single() as any;
+    
+    const tier = subscription?.tier || 'STARTER';
+    const { data: existingKeys } = await supabaseAdmin
+      .from("api_keys" as any)
+      .select("id")
+      .eq("user_id", user.id)
+      .is("deleted_at", null) as any;
+    
+    const maxKeys = tier === 'BUSINESS' ? 1000 : tier === 'PRO' ? 5 : 1;
+    if ((existingKeys?.length || 0) >= maxKeys) {
+      throw new Error(`Plan limit reached: ${tier} plan allows maximum ${maxKeys} API keys.`);
+    }
+
     const rawKey = `gitmoom_${randomBytes(32).toString("hex")}`;
     const hashedKey = createHash("sha256").update(rawKey).digest("hex");
     const keyPreview = `${rawKey.slice(0, 12)}...${rawKey.slice(-4)}`;
