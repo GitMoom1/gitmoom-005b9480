@@ -158,9 +158,12 @@ function Index() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const mountedAtRef = useRef<number>(Date.now());
   const [leadStatus, setLeadStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const { openCheckout, checkoutElement } = useStripeCheckout();
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     mountedAtRef.current = Date.now();
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
   }, []);
 
   const validEmail = emailSchema.safeParse(email).success;
