@@ -1,17 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { createClient } from "@supabase/supabase-js";
-
-// Create a generic client to bypass strict type checking until types are generated
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
-const SUPABASE_PUBLISHABLE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || "";
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 export const getOrganization = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ slug: z.string() }).parse(data))
   .handler(async ({ data }) => {
-    const { data: org, error } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: org, error } = await supabaseAdmin
       .from("organizations")
       .select(`
         *,
@@ -37,7 +31,8 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
       }).parse(data)
   )
   .handler(async ({ data }) => {
-    let query = supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let query = supabaseAdmin
       .from("repositories")
       .select("*")
       .eq("organization_id", data.orgId);
@@ -81,7 +76,8 @@ export const updateOrganizationSettings = createServerFn({ method: "POST" })
       }).parse(data)
   )
   .handler(async ({ data }) => {
-    const { error } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("organization_settings")
       .update(data.settings)
       .eq("organization_id", data.orgId);
@@ -99,7 +95,8 @@ export const toggleRepoArchive = createServerFn({ method: "POST" })
       }).parse(data)
   )
   .handler(async ({ data }) => {
-    const { error } = await supabase
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
       .from("repositories")
       .update({ is_archived: data.archived })
       .eq("id", data.repoId);
