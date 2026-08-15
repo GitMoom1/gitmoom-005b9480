@@ -1,69 +1,105 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { supabase } from "@/integrations/supabase/client";
 
-export const createOrganization = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({
-      name: z.string().min(1).max(50),
-      slug: z.string().min(1).max(50).regex(/^[a-z0-9-]+$/),
-    }).parse(input)
-  )
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+const VisibilityType = z.enum(["PUBLIC", "INTERNAL", "PRIVATE"]);
 
-    const { data: org, error } = await (supabase as any)
+export const getOrganization = createServerFn({ method: "GET" })
+  .inputValidator((data) => z.object({ slug: z.string() }).parse(data))
+  .handler(async ({ data }) => {
+    const { data: org, error } = await supabase
       .from("organizations")
-      .insert({
-        name: data.name,
-        slug: data.slug,
-        owner_id: userId,
-      })
-      .select("id")
+      .select(`
+        *,
+        organization_settings (*),
+        members:organization_members (
+          count
+        )
+      `)
+      .eq("slug", data.slug)
       .single();
 
-    if (error) throw error;
-
-    // The database trigger "on_organization_created" already adds the owner as a member.
-    // We don't need to do it here manually to avoid race conditions or duplicates.
-    
-    return { id: org.id };
+    if (error) throw new Error(error.message);
+    return org;
   });
 
-export const transferRepository = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) =>
-    z.object({
-      repositoryId: z.string().uuid(),
-      targetOrgId: z.string().uuid().optional(),
-      targetUserId: z.string().uuid().optional(),
-    }).parse(input)
+export const getOrganizationRepos = createServerFn({ method: "GET" })
+  .inputValidator(
+    (data) =>
+      z.object({
+        orgId: z.string(),
+        filter: z.string().optional().default("all"),
+        showArchived: z.boolean().optional().default(false),
+      }).parse(data)
   )
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+  .handler(async ({ data }) => {
+    let query = supabase
+      .from("repositories")
+      .select("*")
+      .eq("organization_id", data.orgId);
 
-    // 1. Check if user is on a paid plan
-    const { data: canTransfer, error: planError } = await (supabase as any).rpc("can_transfer_repo", {
-      _user_id: userId,
-    });
-    
-    if (planError || !canTransfer) {
-      throw new Error("Repository transfer is only available on paid plans.");
+    if (!data.showArchived) {
+      query = query.eq("is_archived", false);
     }
 
-    // 2. Perform transfer
-    const updateData: any = {};
-    if (data.targetOrgId) updateData.organization_id = data.targetOrgId;
-    if (data.targetUserId) updateData.owner_id = data.targetUserId;
+    switch (data.filter) {
+      case "public":
+        query = query.eq("visibility", "PUBLIC");
+        break;
+      case "internal":
+        query = query.eq("visibility", "INTERNAL");
+        break;
+      case "private":
+        query = query.eq("visibility", "PRIVATE");
+        break;
+      case "forks":
+        query = query.eq("is_fork", true);
+        break;
+      case "archived":
+        query = query.eq("is_archived", true);
+        break;
+      case "templates":
+        query = query.eq("is_template", true);
+        break;
+    }
 
-    const { error } = await (supabase as any)
+    const { data: repos, error } = await query;
+    if (error) throw new Error(error.message);
+    return repos;
+  });
+
+export const updateOrganizationSettings = createServerFn({ method: "POST" })
+  .inputValidator(
+    (data) =>
+      z.object({
+        orgId: z.string(),
+        settings: z.any(),
+      }).parse(data)
+  )
+  .handler(async ({ data }) => {
+    const { error } = await supabase
+      .from("organization_settings")
+      .update(data.settings)
+      .eq("organization_id", data.orgId);
+
+    if (error) throw new Error(error.message);
+    return { success: true };
+  });
+
+export const toggleRepoArchive = createServerFn({ method: "POST" })
+  .inputValidator(
+    (data) =>
+      z.object({
+        repoId: z.string(),
+        archived: z.boolean(),
+      }).parse(data)
+  )
+  .handler(async ({ data }) => {
+    const { error } = await supabase
       .from("repositories")
-      .update(updateData)
-      .eq("id", data.repositoryId)
-      .eq("owner_id", userId); // Ensure user owns it
+      .update({ is_archived: data.archived })
+      .eq("id", data.repoId);
 
-    if (error) throw error;
-
-    return { ok: true };
+    if (error) throw new Error(error.message);
+    return { success: true };
   });
