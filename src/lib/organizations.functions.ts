@@ -6,11 +6,10 @@ import { createClient } from "@supabase/supabase-js";
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "";
 const SUPABASE_PUBLISHABLE_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY || "";
 
-// We use a generic client here because the auto-generated types are out of sync with the actual schema
 const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 export const getOrganization = createServerFn({ method: "GET" })
-  .inputValidator((data) => z.object({ slug: z.string() }).parse(data))
+  .inputValidator((data: unknown) => z.object({ slug: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { data: org, error } = await supabase
       .from("organizations")
@@ -30,7 +29,7 @@ export const getOrganization = createServerFn({ method: "GET" })
 
 export const getOrganizationRepos = createServerFn({ method: "GET" })
   .inputValidator(
-    (data) =>
+    (data: unknown) =>
       z.object({
         orgId: z.string(),
         filter: z.string().optional().default("all"),
@@ -75,7 +74,7 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
 
 export const updateOrganizationSettings = createServerFn({ method: "POST" })
   .inputValidator(
-    (data) =>
+    (data: unknown) =>
       z.object({
         orgId: z.string(),
         settings: z.any(),
@@ -93,7 +92,7 @@ export const updateOrganizationSettings = createServerFn({ method: "POST" })
 
 export const toggleRepoArchive = createServerFn({ method: "POST" })
   .inputValidator(
-    (data) =>
+    (data: unknown) =>
       z.object({
         repoId: z.string(),
         archived: z.boolean(),
