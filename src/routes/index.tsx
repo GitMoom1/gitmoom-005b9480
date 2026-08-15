@@ -227,16 +227,24 @@ function Index() {
       {/* Nav */}
       <header className="sticky top-0 z-50 glass">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <a href="#" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <Moon className="h-7 w-7 text-primary" strokeWidth={1.8} />
             <span className="text-lg font-semibold tracking-tight">GitMoon</span>
-          </a>
+          </Link>
           <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
             <a href="#features" className="transition hover:text-foreground">Features</a>
-            <a href="#how" className="transition hover:text-foreground">How it works</a>
             <a href="#pricing" className="transition hover:text-foreground">Pricing</a>
-            <a href="/admin/organizations" className="transition hover:text-foreground">Organizations</a>
             <a href="#roadmap" className="transition hover:text-foreground">Roadmap</a>
+            {user && (
+              <>
+                <Link to="/dashboard" className="transition hover:text-foreground flex items-center gap-1.5">
+                  <LayoutDashboard className="h-3.5 w-3.5" /> Dashboard
+                </Link>
+                <Link to="/admin/organizations" className="transition hover:text-foreground flex items-center gap-1.5">
+                  <Users className="h-3.5 w-3.5" /> Organizations
+                </Link>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -247,16 +255,28 @@ function Index() {
             >
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
-            <a href="#" className="hidden text-sm text-muted-foreground transition hover:text-foreground sm:inline">
-              Sign in
-            </a>
-            <a
-              href="#cta"
-              onClick={() => onCtaClick("nav_get_started")}
-              className="inline-flex items-center gap-1.5 rounded-full bg-gradient-cosmic px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
-            >
-              Get started <ArrowRight className="h-4 w-4" />
-            </a>
+            
+            {user ? (
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-1.5 rounded-full bg-gradient-cosmic px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
+              >
+                My Account <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <>
+                <Link to="/auth" className="hidden text-sm text-muted-foreground transition hover:text-foreground sm:inline">
+                  Sign in
+                </Link>
+                <Link
+                  to="/auth"
+                  onClick={() => onCtaClick("nav_get_started")}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-gradient-cosmic px-4 py-2 text-sm font-medium text-primary-foreground shadow-glow transition hover:opacity-90"
+                >
+                  Get started <ArrowRight className="h-4 w-4" />
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </header>
