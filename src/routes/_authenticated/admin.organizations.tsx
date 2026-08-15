@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
@@ -19,7 +19,7 @@ function OrganizationsPanel() {
   const { data: orgs, isLoading } = useQuery({
     queryKey: ["organizations"],
     queryFn: async () => {
-      const { data } = await supabase.from("organizations").select("*");
+      const { data } = await (supabase as any).from("organizations").select("*");
       return data || [];
     },
   });
@@ -51,7 +51,7 @@ function OrganizationsPanel() {
                 <p className="text-sm text-muted-foreground">Create one to start collaborating.</p>
               </div>
             ) : (
-              orgs?.map((org) => (
+              orgs?.map((org: any) => (
                 <div key={org.id} className="flex items-center justify-between p-6 glass rounded-2xl border border-border/50">
                   <div className="flex items-center gap-4">
                     <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -78,7 +78,7 @@ function OrganizationsPanel() {
             </h3>
             <form onSubmit={(e) => {
               e.preventDefault();
-              createMutation.mutate({ name: newOrgName, slug: newOrgOrgSlug });
+              createMutation.mutate({ name: newOrgName, slug: newOrgSlug });
             }} className="space-y-3">
               <input
                 placeholder="Org Name"

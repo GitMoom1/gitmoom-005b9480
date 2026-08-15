@@ -13,7 +13,7 @@ export const createOrganization = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
-    const { data: org, error } = await supabase
+    const { data: org, error } = await (supabase as any)
       .from("organizations")
       .insert({
         name: data.name,
@@ -26,7 +26,7 @@ export const createOrganization = createServerFn({ method: "POST" })
     if (error) throw error;
 
     // Add owner as admin member
-    await supabase.from("organization_members").insert({
+    await (supabase as any).from("organization_members").insert({
       org_id: org.id,
       user_id: userId,
       role: "admin",
@@ -48,7 +48,7 @@ export const transferRepository = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     // 1. Check if user is on a paid plan
-    const { data: canTransfer, error: planError } = await supabase.rpc("can_transfer_repo", {
+    const { data: canTransfer, error: planError } = await (supabase as any).rpc("can_transfer_repo", {
       _user_id: userId,
     });
     
@@ -61,7 +61,7 @@ export const transferRepository = createServerFn({ method: "POST" })
     if (data.targetOrgId) updateData.organization_id = data.targetOrgId;
     if (data.targetUserId) updateData.owner_id = data.targetUserId;
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("repositories")
       .update(updateData)
       .eq("id", data.repositoryId)
