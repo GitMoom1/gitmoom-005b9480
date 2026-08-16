@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+// jogue o logo em todo os lugares que vai logo
 /**
+
  * **Prompt para criar sistema de login e criação de conta com antifraude (inspirado no GitMoon)**
  *
  * ---
