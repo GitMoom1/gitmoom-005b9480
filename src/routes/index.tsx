@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+// jogue o logo em todo os lugares que vai logo
 /**
+
  * **Prompt para criar sistema de login e criação de conta com antifraude (inspirado no GitMoon)**
  *
  * ---
@@ -313,7 +315,7 @@ function Index() {
       <header className="sticky top-0 z-50 glass">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <Moon className="h-7 w-7 text-primary" strokeWidth={1.8} />
+            <img src={logo} alt="GitMoon" className="h-7 w-7 object-contain" />
             <span className="text-lg font-semibold tracking-tight">GitMoon</span>
           </Link>
           <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
@@ -593,7 +595,7 @@ release:
       <section id="cta" className="mx-auto max-w-5xl px-6 py-24 md:py-32">
         <div className="relative overflow-hidden rounded-3xl glass p-12 text-center shadow-soft md:p-20">
           <div className="absolute inset-0 bg-gradient-aurora opacity-60" />
-          <Moon className="relative mx-auto h-12 w-12 text-primary animate-float" />
+          <img src={logo} alt="GitMoon" className="relative mx-auto h-12 w-12 animate-float object-contain" />
           <h2 className="relative mt-6 text-4xl font-semibold tracking-tight md:text-5xl">
             Ready to <span className="text-gradient">launch?</span>
           </h2>
@@ -752,7 +754,7 @@ release:
         <div className="mx-auto max-w-7xl px-6 py-12">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex items-center gap-2">
-              <Moon className="h-5 w-5 text-primary" />
+              <img src={logo} alt="GitMoon" className="h-5 w-5 object-contain" />
               <span className="font-semibold">GitMoon</span>
               <span className="text-sm text-muted-foreground">
                 © {new Date().getFullYear()}
