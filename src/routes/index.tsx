@@ -1,86 +1,110 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 // jogue o logo em todo os lugares que vai logo
 /**
-
- * **Prompt para criar sistema de login e criação de conta com antifraude (inspirado no GitMoon)**
+ * Com base nas imagens fornecidas (tela de login e menu de configurações), vou propor um sistema de **conta e suporte** que vai muito além do que GitHub e GitLab oferecem, com foco em **navegação intuitiva**, **organização inteligente** e **experiência do usuário impecável** – para que ninguém se perca.
  *
  * ---
  *
- * **Contexto:**  
- * Preciso desenvolver um sistema completo de autenticação para a plataforma **GitMoon** (slogan: "Code Beyond Limits"), que inclua páginas de **login**, **registro de novas contas** e **recuperação de senha**, com forte ênfase em **medidas antifraude**. O design deve ser clean, moderno e semelhante ao das imagens de referência (estilo GitHub, com campos para usuário/e-mail, senha, "lembrar-me", link para "esqueci a senha", botão de login, chave de acesso, termos de uso e privacidade, e link para registro).
+ * ## 🧭 Visão Geral do Sistema
+ *
+ * O sistema unifica **gerenciamento de conta**, **integrações**, **faturamento** e **suporte** em uma única interface, com uma arquitetura de navegação que privilegia a clareza e a rapidez.
+ *
+ * **Princípios de design:**
+ * - **Menus contextuais** (o conteúdo muda conforme a seção)
+ * - **Breadcrumbs permanentes** (você sempre sabe onde está)
+ * - **Busca global** (encontre qualquer configuração em segundos)
+ * - **Assistente virtual** (sugere ações com base no seu uso)
  *
  * ---
  *
- * **Requisitos funcionais:**
+ * ## 🗂️ Estrutura de Navegação
  *
- * 1. **Página de Login**  
- *    - Campo: Nome de usuário ou e-mail principal.  
- *    - Campo: Senha (com opção de mostrar/ocultar).  
- *    - Checkbox "Lembrar de mim" (persiste sessão com cookie seguro).  
- *    - Link "Esqueceu sua senha?" → redireciona para fluxo de recuperação.  
- *    - Botão "Fazer login".  
- *    - Opção "Chave de acesso" (passkey / WebAuthn) para login sem senha.  
- *    - Rodapé com links para Termos de Uso, Declaração de Privacidade e Política de Cookies.  
- *    - Link "Ainda não tem uma conta? Registre-se agora" → redireciona para registro.
- *
- * 2. **Página de Registro**  
- *    - Campos: Nome completo, Nome de usuário (único), E-mail (validado), Senha (com requisitos de força), Confirmação de senha.  
- *    - Validação em tempo real (front-end) e no back-end.  
- *    - Envio de e-mail de confirmação com link de ativação (token temporário).  
- *    - Após confirmação, redirecionar para login.
- *
- * 3. **Recuperação de senha**  
- *    - Solicitar e-mail ou nome de usuário.  
- *    - Enviar link temporário para redefinição (token com expiração).  
- *    - Página para nova senha com confirmação.
- *
- * 4. **Chave de acesso (Passkey)**  
- *    - Integrar with WebAuthn para permitir login biométrico ou com PIN, como alternativa à senha.
+ * ### Menu Lateral (sempre visível)
+ * | Ícone | Seção | Subitens (exemplos) |
+ * |-------|-------|----------------------|
+ * | 👤 | **Perfil** | Dados pessoais, foto, biografia, redes sociais |
+ * | 🔐 | **Segurança** | Senha, 2FA, dispositivos confiáveis, sessões ativas |
+ * | 💳 | **Faturamento** | Planos, histórico de pagamentos, faturas, método de pagamento |
+ * | 🔗 | **Integrações** | GitHub, GitLab, Google, ChatGPT, Salesforce, Bitbucket (todas com configurações granulares) |
+ * | 📧 | **E-mails** | Endereços associados, preferências de notificação por e-mail |
+ * | 🔔 | **Notificações** | Central de notificações in-app, canais (e-mail, push, Slack) |
+ * | ⚙️ | **Preferências** | Idioma, tema, atalhos de teclado, timezone |
+ * | 📝 | **Modelos de comentário** | Criação e gestão de templates reutilizáveis para revisões/issues |
+ * | 📊 | **Cotas de uso** | Consumo em tempo real (armazenamento, CI/CD minutos, API calls) |
+ * | 🛟 | **Suporte** | Acesso direto à central de ajuda, tickets, chat ao vivo |
  *
  * ---
  *
- * **Requisitos de segurança e antifraude (obrigatórios):**
+ * ## 🚀 Funcionalidades Avançadas (superando GitHub/GitLab)
  *
- * - **Limitação de tentativas de login** (ex: 5 tentativas falhas em 15 minutos → bloquear IP/usuário por 30 min, com aumento progressivo).  
- * - **CAPTCHA** (reCAPTCHA v3 ou hCaptcha) nas páginas de login e registro, acionado após falhas ou em comportamentos suspeitos.  
- * - **Verificação de e-mail** obrigatória antes do primeiro login.  
- * - **Detecção de atividades anômalas**:  
- *   - Geolocalização e comparação com histórico de IPs.  
- *   - Alertas em caso de login de dispositivo ou localização não reconhecida (enviar e-mail/SMS com opção de bloquear).  
- * - **Proteção contra força bruta** com backoff exponencial.  
- * - **Hash de senha** usando bcrypt ou Argon2.  
- * - **Uso de TLS/HTTPS** em toda a comunicação.  
- * - **Cookies seguros** (HttpOnly, Secure, SameSite=Strict).  
- * - **Tokens JWT** com tempo de vida curto e refresh token rotativo.  
- * - **Monitoramento de múltiplas sessões** (opção de revogar todas as sessões ativas).  
- * - **Rate limiting** por IP e por usuário para endpoints sensíveis.  
- * - **Validação anti-bot** no registro (ex: verificação de e-mail descartável, bloqueio de domínios temporários).  
- * - **Logs de auditoria** de todas as ações de autenticação (com dados anonimizados).  
- * - **Mecanismo de "força bruta de 2FA"** – se habilitado, exigir segundo fator (TOTP ou SMS) em logins suspeitos.
+ * ### 1. **Central de Suporte Integrada**
+ * - **FAQ dinâmica** com artigos baseados no seu plano e nas funcionalidades que você mais usa.
+ * - **Sistema de tickets** com priorização automática (baseada em impacto e frequência).
+ * - **Chat ao vivo** com suporte humano ou bot inteligente (para dúvidas simples).
+ * - **Histórico completo** de todas as interações com o suporte, acessível a partir do perfil.
+ *
+ * ### 2. **Dashboard Personalizável**
+ * - Ao acessar a conta, você vê um resumo com:
+ *   - Status de integrações (conectado/desconectado)
+ *   - Alertas de segurança (ex.: login suspeito)
+ *   - Próximas faturas
+ *   - Dicas contextuais (“Que tal ativar 2FA?”)
+ *
+ * ### 3. **Navegação “Caminho de Migalhas” Permanente**
+ * ```
+ * Início > Perfil > Segurança > Dispositivos
+ * ```
+ * Sempre visível no topo, com links clicáveis para voltar rapidamente.
+ *
+ * ### 4. **Busca Inteligente**
+ * - Campo de busca global que pesquisa em **todas as configurações**, artigos de ajuda, tickets anteriores e integrações.
+ * - Sugestões em tempo real enquanto digita.
+ *
+ * ### 5. **Modo “Tour Guiado”**
+ * - Para novos usuários, um tour interativo explica cada seção do menu, com a opção de pular ou repetir.
+ *
+ * ### 6. **Painel de Acesso Rápido**
+ * - Ícones flutuantes para ações frequentes: “Alterar senha”, “Ver fatura”, “Abrir ticket”, “Conectar nova integração”.
+ *
+ * ### 7. **Integração com Assistentes de IA**
+ * - Um assistente (ex.: “Ajuda AI”) que pode:
+ *   - Explicar configurações complexas.
+ *   - Sugerir otimizações (ex.: reduzir custos, melhorar segurança).
+ *   - Gerar modelos de comentário com base no contexto.
  *
  * ---
  *
- * **Requisitos técnicos (sugestão – você pode adaptar):**  
- * - Frontend: React/Vue com componentes estilizados (CSS Modules ou Tailwind) seguindo o design das imagens.  
- * - Backend: Node.js (Express) ou Python (Django/Flask) ou Java (Spring).  
- * - Banco de dados: PostgreSQL ou MongoDB (com índices para busca rápida).  
- * - Cache: Redis para rate limiting, bloqueios temporários e sessões.  
- * - Envio de e-mails: serviço transacional (SendGrid, AWS SES).  
- * - WebAuthn: bibliotecas como `@simplewebauthn/server` e `@simplewebauthn/browser`.  
+ * ## 📱 Adaptação Mobile e Temas
+ * - **Layout responsivo** que colapsa o menu lateral em um menu hambúrguer.
+ * - **Tema claro/escuro** sincronizado com o sistema operacional.
+ * - **Acessibilidade** com navegação por teclado e leitores de tela.
  *
  * ---
  *
- * **Entregável esperado:**  
- * Gere um **código-fonte completo** (frontend + backend) com todos os endpoints, validações, integração antifraude, e uma documentação resumida explicando as medidas implementadas. Inclua também instruções de configuração (variáveis de ambiente, migrações de banco, chaves de API para CAPTCHA e e-mail). O código deve ser modular, seguro e pronto para deploy em ambiente de produção.
+ * ## 🔐 Segurança e Privacidade
+ * - **Log de atividades** detalhado (quem acessou o quê e quando).
+ * - **Notificações de eventos críticos** (nova integração, mudança de plano, login de novo dispositivo).
+ * - **Política de privacidade** e cookies sempre acessíveis no rodapé.
  *
  * ---
  *
- * **Observações finais:**  
- * - O design deve ser fiel à identidade visual do GitMoon (cores escuras, tipografia moderna, ícones minimalistas).  
- * - As mensagens de erro devem ser genéricas para não vazar informações (ex: "Credenciais inválidas" em vez de "Usuário não encontrado").  
- * - Todos os formulários devem ser acessíveis (ARIA labels, navegação por teclado).  
- * - Priorize boas práticas de OWASP para autenticação.
+ * ## 🧩 Como Evitar que o Usuário se Perda
+ *
+ * 1. **Menu sempre visível** com ícones e textos.
+ * 2. **Indicadores visuais** (ex.: número de tickets abertos, notificações não lidas).
+ * 3. **Cores e badges** para destacar seções com novidades ou ações pendentes.
+ * 4. **Roteamento claro**: cada URL reflete a hierarquia (`/conta/perfil/seguranca`).
+ * 5. **Feedback visual** ao salvar alterações (toast de sucesso/erro).
+ *
+ * ---
+ *
+ * ## 🎯 Conclusão
+ *
+ * Esse sistema não é apenas uma “cópia melhorada” do GitHub/GitLab – é uma **plataforma de gestão de identidade e suporte** desenhada para ser **intuitiva**, **rápida** e **personalizável**. O usuário nunca precisa “caçar” uma configuração; ela está a poucos cliques ou uma busca de distância.
+ *
+ * Se precisar de protótipos visuais, fluxogramas ou especificações técnicas para implementação, estou pronto para detalhar ainda mais.
  */
+
 
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
