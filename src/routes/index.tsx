@@ -546,8 +546,8 @@ release:
       <section id="cta" className="mx-auto max-w-5xl px-6 py-24 md:py-32">
         <div className="relative overflow-hidden rounded-3xl glass p-12 text-center shadow-soft md:p-20">
           <div className="absolute inset-0 bg-gradient-aurora opacity-60" />
-          <div className="bg-white p-1 rounded-md w-fit mx-auto relative mb-6">
-            <img src={logo} alt="GitMoon" className="h-12 w-12 animate-float object-contain" />
+          <div className="bg-white/95 p-3 rounded-2xl w-fit mx-auto relative mb-6 shadow-glow border border-white/20 backdrop-blur-sm">
+            <img src={logo} alt="GitMoon" className="h-16 w-16 animate-float object-contain" />
           </div>
           <h2 className="relative mt-6 text-4xl font-semibold tracking-tight md:text-5xl">
             Ready to <span className="text-gradient">launch?</span>
