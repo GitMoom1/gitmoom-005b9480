@@ -40,21 +40,35 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    console.log(`[Auth] Attempting ${mode}...`);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}${safeRedirect}` },
         });
+        console.log("[Auth] Signup response:", { data, error });
         if (error) throw error;
+        if (data?.user && !data.session) {
+          setError("Account created! Please check your email for a confirmation link.");
+          setLoading(false);
+          return;
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        console.log("[Auth] Signin response:", { data, error });
         if (error) throw error;
       }
       window.location.assign(safeRedirect);
-    } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Authentication failed";
+    } catch (err: any) {
+      console.error("[Auth] Error:", err);
+      let msg = "Authentication failed";
+      if (err.message === "Failed to fetch") {
+        msg = "Unable to connect to the authentication server. Please check your internet connection or try again later.";
+      } else if (err.message) {
+        msg = err.message;
+      }
       setError(msg);
     } finally {
       setLoading(false);
