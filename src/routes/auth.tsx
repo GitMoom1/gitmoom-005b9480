@@ -65,7 +65,7 @@ function AuthPage() {
       console.error("[Auth] Error:", err);
       let msg = "Authentication failed";
       if (err.message === "Failed to fetch") {
-        msg = "Unable to connect to the authentication server. Please check your internet connection or try again later. arrrume o";
+        msg = "Não foi possível conectar ao serviço de autenticação. Verifique sua conexão e tente novamente em alguns instantes.";
       } else if (err.message) {
         msg = err.message;
       }
