@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 // jogue o logo em todo os lugares que vai logo
+// de mais vida a logo, com coresvibrantes, respeitando as que ja tem. reforce as cores existentes
 /**
  * Com base nas imagens fornecidas (tela de login e menu de configurações), vou propor um sistema de **conta e suporte** que vai muito além do que GitHub e GitLab oferecem, com foco em **navegação intuitiva**, **organização inteligente** e **experiência do usuário impecável** – para que ninguém se perca.
  *
