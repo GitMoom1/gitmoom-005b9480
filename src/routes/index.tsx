@@ -51,7 +51,8 @@ import {
   LayoutDashboard,
   Users
 } from "lucide-react";
-import logo from "@/assets/gitmoon-logo.png";
+import logoAsset from "@/assets/gitmoon-logo-new.webp.asset.json";
+const logo = logoAsset.url;
 import hero from "@/assets/gitmoon-hero.jpg";
 import { useTheme } from "@/lib/theme";
 import { track } from "@/lib/analytics";
