@@ -315,7 +315,7 @@ function Index() {
       <header className="sticky top-0 z-50 glass">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <Moon className="h-7 w-7 text-primary" strokeWidth={1.8} />
+            <img src={logo} alt="GitMoon" className="h-7 w-7 object-contain" />
             <span className="text-lg font-semibold tracking-tight">GitMoon</span>
           </Link>
           <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
