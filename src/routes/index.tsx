@@ -2,109 +2,43 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 // jogue o logo em todo os lugares que vai logo
 // de mais vida a logo, com coresvibrantes, respeitando as que ja tem. reforce as cores existentes
 /**
- * Com base nas imagens fornecidas (tela de login e menu de configurações), vou propor um sistema de **conta e suporte** que vai muito além do que GitHub e GitLab oferecem, com foco em **navegação intuitiva**, **organização inteligente** e **experiência do usuário impecável** – para que ninguém se perca.
+ * Aqui está um **prompt completo e detalhado** para gerar uma interface de usuário (UI) e experiência (UX) muito mais avançada que o GitHub/GitLab tradicional, unindo os temas das suas duas telas (Home e Settings) com foco total em responsividade (Mobile e Web) e incluindo o botão de menu obrigatório:
  *
  * ---
  *
- * ## 🧭 Visão Geral do Sistema
+ * **Prompt para Geração de UI/UX (Design System):**
  *
- * O sistema unifica **gerenciamento de conta**, **integrações**, **faturamento** e **suporte** em uma única interface, com uma arquitetura de navegação que privilegia a clareza e a rapidez.
- *
- * **Princípios de design:**
- * - **Menus contextuais** (o conteúdo muda conforme a seção)
- * - **Breadcrumbs permanentes** (você sempre sabe onde está)
- * - **Busca global** (encontre qualquer configuração em segundos)
- * - **Assistente virtual** (sugere ações com base no seu uso)
- *
- * ---
- *
- * ## 🗂️ Estrutura de Navegação
- *
- * ### Menu Lateral (sempre visível)
- * | Ícone | Seção | Subitens (exemplos) |
- * |-------|-------|----------------------|
- * | 👤 | **Perfil** | Dados pessoais, foto, biografia, redes sociais |
- * | 🔐 | **Segurança** | Senha, 2FA, dispositivos confiáveis, sessões ativas |
- * | 💳 | **Faturamento** | Planos, histórico de pagamentos, faturas, método de pagamento |
- * | 🔗 | **Integrações** | GitHub, GitLab, Google, ChatGPT, Salesforce, Bitbucket (todas com configurações granulares) |
- * | 📧 | **E-mails** | Endereços associados, preferências de notificação por e-mail |
- * | 🔔 | **Notificações** | Central de notificações in-app, canais (e-mail, push, Slack) |
- * | ⚙️ | **Preferências** | Idioma, tema, atalhos de teclado, timezone |
- * | 📝 | **Modelos de comentário** | Criação e gestão de templates reutilizáveis para revisões/issues |
- * | 📊 | **Cotas de uso** | Consumo em tempo real (armazenamento, CI/CD minutos, API calls) |
- * | 🛟 | **Suporte** | Acesso direto à central de ajuda, tickets, chat ao vivo |
- *
- * ---
- *
- * ## 🚀 Funcionalidades Avançadas (superando GitHub/GitLab)
- *
- * ### 1. **Central de Suporte Integrada**
- * - **FAQ dinâmica** com artigos baseados no seu plano e nas funcionalidades que você mais usa.
- * - **Sistema de tickets** com priorização automática (baseada em impacto e frequência).
- * - **Chat ao vivo** com suporte humano ou bot inteligente (para dúvidas simples).
- * - **Histórico completo** de todas as interações com o suporte, acessível a partir do perfil.
- *
- * ### 2. **Dashboard Personalizável**
- * - Ao acessar a conta, você vê um resumo com:
- *   - Status de integrações (conectado/desconectado)
- *   - Alertas de segurança (ex.: login suspeito)
- *   - Próximas faturas
- *   - Dicas contextuais (“Que tal ativar 2FA?”)
- *
- * ### 3. **Navegação “Caminho de Migalhas” Permanente**
- * ```
- * Início > Perfil > Segurança > Dispositivos
- * ```
- * Sempre visível no topo, com links clicáveis para voltar rapidamente.
- *
- * ### 4. **Busca Inteligente**
- * - Campo de busca global que pesquisa em **todas as configurações**, artigos de ajuda, tickets anteriores e integrações.
- * - Sugestões em tempo real enquanto digita.
- *
- * ### 5. **Modo “Tour Guiado”**
- * - Para novos usuários, um tour interativo explica cada seção do menu, com a opção de pular ou repetir.
- *
- * ### 6. **Painel de Acesso Rápido**
- * - Ícones flutuantes para ações frequentes: “Alterar senha”, “Ver fatura”, “Abrir ticket”, “Conectar nova integração”.
- *
- * ### 7. **Integração com Assistentes de IA**
- * - Um assistente (ex.: “Ajuda AI”) que pode:
- *   - Explicar configurações complexas.
- *   - Sugerir otimizações (ex.: reduzir custos, melhorar segurança).
- *   - Gerar modelos de comentário com base no contexto.
- *
- * ---
- *
- * ## 📱 Adaptação Mobile e Temas
- * - **Layout responsivo** que colapsa o menu lateral em um menu hambúrguer.
- * - **Tema claro/escuro** sincronizado com o sistema operacional.
- * - **Acessibilidade** com navegação por teclado e leitores de tela.
- *
- * ---
- *
- * ## 🔐 Segurança e Privacidade
- * - **Log de atividades** detalhado (quem acessou o quê e quando).
- * - **Notificações de eventos críticos** (nova integração, mudança de plano, login de novo dispositivo).
- * - **Política de privacidade** e cookies sempre acessíveis no rodapé.
- *
- * ---
- *
- * ## 🧩 Como Evitar que o Usuário se Perda
- *
- * 1. **Menu sempre visível** com ícones e textos.
- * 2. **Indicadores visuais** (ex.: número de tickets abertos, notificações não lidas).
- * 3. **Cores e badges** para destacar seções com novidades ou ações pendentes.
- * 4. **Roteamento claro**: cada URL reflete a hierarquia (`/conta/perfil/seguranca`).
- * 5. **Feedback visual** ao salvar alterações (toast de sucesso/erro).
- *
- * ---
- *
+ * > "Crie o design de interface de um **DevOps Workspace de Próxima Geração** (inspirado no GitHub e GitLab, porém com inteligência artificial e produtividade avançada). O sistema deve atender perfeitamente às versões **Mobile (iOS/Android)** e **Web (Desktop)**.
+ * >
+ * > **1. TELA HOME (Dashboard Principal):**
+ * > *   **Layout Web:** Sidebar fixa à esquerda com o título "Meu Trabalho". Abaixo, exiba os itens com ícones modernos e contadores interativos (badges em tempo real): *Issues (com prioridade IA)*, *Solicitações de pull (com status de conflito)*, *Discussões (não lidas)*, *Projetos (com progresso)*, *Repositórios Principais (pinned)*, *Organizações* e *Classificado com estrela (tendências)*.
+ * > *   **Área Principal:** Um feed inteligente chamado "Atividade e Favoritos". Os repositórios favoritos devem ser exibidos como **widgets expansíveis**, mostrando métricas ao vivo (último commit, status do CI/CD, e número de forks/stars). Abaixo, adicione um bloco "Sugeridos para Você" baseado em IA.
+ * > *   **Exigência Crítica:** No topo esquerdo (Web) ou no canto inferior/header (Mobile), deve haver um **botão de menu (ícone hambúrguer ☰)** que abre um drawer global de navegação rápida entre todas as áreas do sistema.
+ * > *   **Layout Mobile:** A Sidebar deve se transformar em uma barra inferior de navegação (Bottom Tabs) com os 4 principais atalhos (Issues, PRs, Projetos, Favoritos), enquanto o botão de menu ☰ fica fixo no header superior ao lado do avatar. Os "Favoritos" viram cards em lista rolável verticalmente.
+ * >
+ * > **2. TELA DE CONFIGURAÇÕES DO USUÁRIO (User Settings):**
+ * > *   **Layout Web:** Painel dividido em duas colunas. Coluna esquerda com navegação em árvore: "Profile" (expandido) > "Account". Dentro de "Account", exiba visualmente os sub-itens como mini-cards ou pills interativas: *Billing (com gráfico de gastos)*, *Access (Gerenciamento de 2FA e chaves SSH)*, *Integration accounts (Slack, Jira, AWS)*, *Emails (com verificação de status)*, *Notifications (central inteligente com filtros)*, *Preferences (Dark/Light mode, idioma)*, *Comment templates (snippets salvos)* e *Usage quotas (barras de progresso de armazenamento/CI)*.
+ * > *   **Ações Especiais:** Destaque visualmente os botões "Upgrade subscription" (com efeito gradiente e selo 'PRO') e "Help" (com ícone de chat ao vivo) no rodapé da sidebar ou como botões flutuantes.
+ * > *   **Layout Mobile:** As configurações devem estar dentro de um bottom-sheet ou tela cheia com navegação por abas deslizantes (Swipe Tabs). O menu de navegação das configurações fica oculto atrás do **botão de menu ☰** no header, abrindo uma lista vertical estilizada.
+ * >
+ * > **3. Diretrizes Visuais e Funcionais Avançadas (O Diferencial):**
+ * > *   **Estética:** Design 'Glassmorphism' com fundo escuro profundo (Dark Mode first), com bordas levemente neon e alto contraste para acessibilidade. Use a fonte Inter ou SF Pro.
+ * > *   **IA Integrada:** Adicione um campo de busca global com autocomplete e um pequeno atalho para "Copilot AI" em ambas as telas.
+ * > *   **Microinterações:** Inclua animações suaves de hover, transições entre as páginas e estados de carregamento esqueletais (skeleton screens).
+ * > *   **Consistência:** O botão de menu ☰ deve ter o mesmo estilo, posição relativa e comportamento (abrir/fechar drawer) em ambas as telas (Home e Settings) e em ambos os dispositivos (Mobile e Web).
+ * >
+ * > Gere **wireframes de alta fidelidade** (ou código HTML/CSS/React) representando essas duas telas principais, mostrando explicitamente como o layout se adapta (breakpoints para 1440px, 768px e 375px).
+ */
+
+/**
  * ## 🎯 Conclusão
  *
  * Esse sistema não é apenas uma “cópia melhorada” do GitHub/GitLab – é uma **plataforma de gestão de identidade e suporte** desenhada para ser **intuitiva**, **rápida** e **personalizável**. O usuário nunca precisa “caçar” uma configuração; ela está a poucos cliques ou uma busca de distância.
  *
  * Se precisar de protótipos visuais, fluxogramas ou especificações técnicas para implementação, estou pronto para detalhar ainda mais.
  */
+
+
 
 
 import { useServerFn } from "@tanstack/react-start";
