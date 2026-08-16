@@ -264,8 +264,8 @@ function Index() {
       <header className="sticky top-0 z-50 glass">
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="bg-white p-1 rounded-md">
-              <img src={logo} alt="GitMoon" className="h-7 w-7 object-contain" />
+            <div className="bg-white/95 p-1 rounded-lg shadow-sm border border-white/20 backdrop-blur-sm">
+              <img src={logo} alt="GitMoon" className="h-8 w-8 object-contain" />
             </div>
             <span className="text-lg font-semibold tracking-tight">GitMoon</span>
           </Link>
