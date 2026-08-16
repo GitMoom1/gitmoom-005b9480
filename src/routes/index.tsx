@@ -707,7 +707,9 @@ release:
         <div className="mx-auto max-w-7xl px-6 py-12">
           <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="GitMoon" className="h-5 w-5 object-contain" />
+              <div className="bg-white p-0.5 rounded-sm">
+                <img src={logo} alt="GitMoon" className="h-5 w-5 object-contain" />
+              </div>
               <span className="font-semibold">GitMoon</span>
               <span className="text-sm text-muted-foreground">
                 © {new Date().getFullYear()}
