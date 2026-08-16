@@ -2,41 +2,110 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 // jogue o logo em todo os lugares que vai logo
 // de mais vida a logo, com coresvibrantes, respeitando as que ja tem. reforce as cores existentes
 /**
- * Aqui está um **prompt completo e detalhado** para gerar uma interface de usuário (UI) e experiência (UX) muito mais avançada que o GitHub/GitLab tradicional, unindo os temas das suas duas telas (Home e Settings) com foco total em responsividade (Mobile e Web) e incluindo o botão de menu obrigatório:
+ * **Prompt para geração de interface de administração do GitLab com dois menus principais**
  *
  * ---
  *
- * **Prompt para Geração de UI/UX (Design System):**
+ * ### Objetivo
+ * Gere uma interface web funcional (HTML, CSS e JavaScript) que replique e organize as funcionalidades observadas nas imagens fornecidas. A interface deve possuir **dois menus laterais** principais, que alternam o conteúdo da área central:
  *
- * > "Crie o design de interface de um **DevOps Workspace de Próxima Geração** (inspirado no GitHub e GitLab, porém com inteligência artificial e produtividade avançada). O sistema deve atender perfeitamente às versões **Mobile (iOS/Android)** e **Web (Desktop)**.
- * >
- * > **1. TELA HOME (Dashboard Principal):**
- * > *   **Layout Web:** Sidebar fixa à esquerda com o título "Meu Trabalho". Abaixo, exiba os itens com ícones modernos e contadores interativos (badges em tempo real): *Issues (com prioridade IA)*, *Solicitações de pull (com status de conflito)*, *Discussões (não lidas)*, *Projetos (com progresso)*, *Repositórios Principais (pinned)*, *Organizações* e *Classificado com estrela (tendências)*.
- * > *   **Área Principal:** Um feed inteligente chamado "Atividade e Favoritos". Os repositórios favoritos devem ser exibidos como **widgets expansíveis**, mostrando métricas ao vivo (último commit, status do CI/CD, e número de forks/stars). Abaixo, adicione um bloco "Sugeridos para Você" baseado em IA.
- * > *   **Exigência Crítica:** No topo esquerdo (Web) ou no canto inferior/header (Mobile), deve haver um **botão de menu (ícone hambúrguer ☰)** que abre um drawer global de navegação rápida entre todas as áreas do sistema.
- * > *   **Layout Mobile:** A Sidebar deve se transformar em uma barra inferior de navegação (Bottom Tabs) com os 4 principais atalhos (Issues, PRs, Projetos, Favoritos), enquanto o botão de menu ☰ fica fixo no header superior ao lado do avatar. Os "Favoritos" viram cards em lista rolável verticalmente.
- * >
- * > **2. TELA DE CONFIGURAÇÕES DO USUÁRIO (User Settings):**
- * > *   **Layout Web:** Painel dividido em duas colunas. Coluna esquerda com navegação em árvore: "Profile" (expandido) > "Account". Dentro de "Account", exiba visualmente os sub-itens como mini-cards ou pills interativas: *Billing (com gráfico de gastos)*, *Access (Gerenciamento de 2FA e chaves SSH)*, *Integration accounts (Slack, Jira, AWS)*, *Emails (com verificação de status)*, *Notifications (central inteligente com filtros)*, *Preferences (Dark/Light mode, idioma)*, *Comment templates (snippets salvos)* e *Usage quotas (barras de progresso de armazenamento/CI)*.
- * > *   **Ações Especiais:** Destaque visualmente os botões "Upgrade subscription" (com efeito gradiente e selo 'PRO') e "Help" (com ícone de chat ao vivo) no rodapé da sidebar ou como botões flutuantes.
- * > *   **Layout Mobile:** As configurações devem estar dentro de um bottom-sheet ou tela cheia com navegação por abas deslizantes (Swipe Tabs). O menu de navegação das configurações fica oculto atrás do **botão de menu ☰** no header, abrindo uma lista vertical estilizada.
- * >
- * > **3. Diretrizes Visuais e Funcionais Avançadas (O Diferencial):**
- * > *   **Estética:** Design 'Glassmorphism' com fundo escuro profundo (Dark Mode first), com bordas levemente neon e alto contraste para acessibilidade. Use a fonte Inter ou SF Pro.
- * > *   **IA Integrada:** Adicione um campo de busca global com autocomplete e um pequeno atalho para "Copilot AI" em ambas as telas.
- * > *   **Microinterações:** Inclua animações suaves de hover, transições entre as páginas e estados de carregamento esqueletais (skeleton screens).
- * > *   **Consistência:** O botão de menu ☰ deve ter o mesmo estilo, posição relativa e comportamento (abrir/fechar drawer) em ambas as telas (Home e Settings) e em ambos os dispositivos (Mobile e Web).
- * >
- * > Gere **wireframes de alta fidelidade** (ou código HTML/CSS/React) representando essas duas telas principais, mostrando explicitamente como o layout se adapta (breakpoints para 1440px, 768px e 375px).
+ * 1. **Menu "Configurações / Suporte"** – agrupa páginas relacionadas a ajustes de conta, contatos legais, pipelines agendados, exclusão de conta e PIN de suporte.
+ * 2. **Menu "Repositórios / Agentes / Copiloto"** – agrupa funcionalidades de criação de projetos, grupos, snippets, gerenciamento de agentes e assistente Copilot (conforme sugerido).
+ *
+ * ---
+ *
+ * ### Requisitos gerais
+ *
+ * - **Layout**: sidebar esquerda fixa, com dois cabeçalhos de menu expansíveis ou separados. Ao clicar em um item, a área principal exibe o conteúdo correspondente.
+ * - **Estilo**: limpo, moderno, similar ao GitLab (cores: #f0f0f0, #fff, azul #1f75cb, cinza escuro para textos).
+ * - **Responsividade**: (opcional) adaptação para telas menores.
+ * - **Interatividade**: navegação sem recarregar página (SPA simples com JavaScript).
+ *
+ * ---
+ *
+ * ### Estrutura dos menus
+ *
+ * #### Menu 1 – Configurações / Suporte
+ * Itens (com base nas imagens):
+ * - **Alterar nome de usuário**  
+ *   - Exibe campo com caminho atual (`https://gitlab.com/kuboprotocol`)  
+ *   - Botão "Atualizar nome de usuário"  
+ *   - Aviso sobre efeitos colaterais (link "Saiba mais")
+ * - **Contatos legais** (Legacy contacts)  
+ *   - **Designated account manager** – botão "Adicionar" e indicação "Nenhum gerente designado"  
+ *   - **Designated account successor** – botão "Adicionar" e indicação "Nenhum sucessor designado"  
+ *   - Links "Saiba mais" para cada
+ * - **Pipelines agendados que você possui**  
+ *   - Lista vazia com mensagem "Você não possui pipelines agendados ativos"  
+ *   - Opções para visualizar, editar ou transferir propriedade (quando houver)
+ * - **Excluir conta**  
+ *   - Exibe grupos dos quais o usuário é único proprietário (ex: `kuboprotocol-group`)  
+ *   - Mensagem de alerta: "Você deve transferir a propriedade ou excluir estes antes de excluir sua conta"  
+ *   - Botão "Excluir conta" desabilitado enquanto houver grupos
+ * - **PIN de suporte**  
+ *   - Mostra status "Nenhum PIN ativo"  
+ *   - Botão "Gerar novo PIN"
+ *
+ * #### Menu 2 – Repositórios / Agentes / Copiloto
+ * Itens (baseados nas imagens e títulos):
+ * - **Novo projeto/repositório** – formulário para criar projeto (nome, descrição, visibilidade)
+ * - **Novo grupo** – formulário para criar grupo
+ * - **Novo snippet** – formulário para criar snippet
+ * - **Agentes** – listagem/gerenciamento de agentes (CI/CD, etc.)
+ * - **Copiloto** – configurações do assistente IA (ex: ativação, histórico)
+ *
+ * *(Se desejar, pode adicionar mais itens como "Pull requests", "Issues", etc., mas o foco são os presentes nas imagens)*
+ *
+ * ---
+ *
+ * ### Páginas específicas
+ *
+ * #### Página de login (opcional, mas incluída)
+ * - Exibe mensagem: "Já existe uma conta com o e-mail do Google. Faça login com suas credenciais existentes para conectar."
+ * - Campos: "Fazer login" (e-mail/senha), "Chave de acesso"
+ * - Links: "Termos de Uso", "Declaração de Privacidade", "Política de Cookies", "Registre-se agora"
+ * - Botões sociais: Google, GitHub, Bitbucket, Salesforce, ChatGPT
+ * - Checkbox "Lembrar de mim"
+ * - Seletor de idioma: Português (Brasil)
+ *
+ * ---
+ *
+ * ### Instruções técnicas
+ *
+ * - Utilize **HTML5**, **CSS3** e **JavaScript puro** (sem frameworks externos, ou com CDN do Bootstrap 5 se preferir).
+ * - Mantenha o código bem comentado e organizado.
+ * - Os dados podem ser estáticos (mockados), mas a interface deve permitir interações como cliques, mudanças de estado (ex: adicionar contato legal abre um modal ou formulário).
+ * - Para o menu, use ícones (Font Awesome ou SVG) para melhor visualização.
+ *
+ * ---
+ *
+ * ### Exemplo de estrutura de arquivos (sugestão)
+ *
+ * - `index.html` – contém toda a estrutura (ou separado em HTML+CSS+JS)
+ * - Estilos inline ou em `<style>` no cabeçalho.
+ *
+ * ---
+ *
+ * ### Entregável esperado
+ *
+ * Forneça o código completo de uma única página HTML que contenha:
+ * - A sidebar com os dois menus colapsáveis/separados.
+ * - O conteúdo principal que muda conforme o item selecionado.
+ * - Todas as páginas descritas, com textos e elementos visuais conforme as imagens.
+ *
+ * ---
+ *
+ * ### Observações finais
+ *
+ * - O nome de usuário atual é `kuboprotocol`.
+ * - As cores e fontes devem ser agradáveis e profissionais.
+ * - Para a seção "Agentes" e "Copiloto", crie conteúdos exemplificativos (ex: listagem de agentes com status, opção de criar; para Copiloto, um switch de ativação e campo de chave API).
+ *
+ * ---
+ *
+ * **Agora, gere a página conforme este prompt.**
  */
 
-/**
- * ## 🎯 Conclusão
- *
- * Esse sistema não é apenas uma “cópia melhorada” do GitHub/GitLab – é uma **plataforma de gestão de identidade e suporte** desenhada para ser **intuitiva**, **rápida** e **personalizável**. O usuário nunca precisa “caçar” uma configuração; ela está a poucos cliques ou uma busca de distância.
- *
- * Se precisar de protótipos visuais, fluxogramas ou especificações técnicas para implementação, estou pronto para detalhar ainda mais.
- */
 
 
 
