@@ -30,13 +30,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
  * > Gere **wireframes de alta fidelidade** (ou código HTML/CSS/React) representando essas duas telas principais, mostrando explicitamente como o layout se adapta (breakpoints para 1440px, 768px e 375px).
  */
 
- *
+/**
  * ## 🎯 Conclusão
  *
  * Esse sistema não é apenas uma “cópia melhorada” do GitHub/GitLab – é uma **plataforma de gestão de identidade e suporte** desenhada para ser **intuitiva**, **rápida** e **personalizável**. O usuário nunca precisa “caçar” uma configuração; ela está a poucos cliques ou uma busca de distância.
  *
  * Se precisar de protótipos visuais, fluxogramas ou especificações técnicas para implementação, estou pronto para detalhar ainda mais.
  */
+
+
 
 
 import { useServerFn } from "@tanstack/react-start";
