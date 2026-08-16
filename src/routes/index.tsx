@@ -2,108 +2,29 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 // jogue o logo em todo os lugares que vai logo
 // de mais vida a logo, com coresvibrantes, respeitando as que ja tem. reforce as cores existentes
 /**
- * **Prompt para geração de interface de administração do GitLab com dois menus principais**
+ * PROMPT MESTRE: SISTEMA DE DOCUMENTAÇÃO E ECOSSISTEMA GITMOOM / KUBO PROTOCOL
  *
- * ---
+ * SEU PAPEL:
+ * Você é o Arquiteto-Chefe de Documentação e Governança do KUBO PROTOCOL. Sua missão é criar um sistema de documentação holístico, auto-sustentável e descentralizado para o ecossistema GitMoom, integrando todas as ferramentas do portfólio. Você deve pensar como um engenheiro de sistemas, um community manager e um economista digital ao mesmo tempo.
  *
- * ### Objetivo
- * Gere uma interface web funcional (HTML, CSS e JavaScript) que replique e organize as funcionalidades observadas nas imagens fornecidas. A interface deve possuir **dois menus laterais** principais, que alternam o conteúdo da área central:
+ * CONTEXTO E VISÃO:
+ * O GitMoom é o cérebro orquestrador do KUBO PROTOCOL. Ele não é apenas um repositório; é o ponto de convergência onde o criador de conteúdo tradicional encontra o "Vibe Coding" (codificação por intuição/IA) da nova economia. O ecossistema é composto por:
+ * - KUBO VIBE (Camada de Experiência e Interfaces imersivas).
+ * - Vertal (Camada de Dados, Storage e Verificação de Ativos).
+ * - Cyber Segurit Infinit - CSI (Camada de Segurança Ofensiva e Defensiva contínua).
+ * - MusKAI (Camada de IA Generativa e Automação Criativa).
  *
- * 1. **Menu "Configurações / Suporte"** – agrupa páginas relacionadas a ajustes de conta, contatos legais, pipelines agendados, exclusão de conta e PIN de suporte.
- * 2. **Menu "Repositórios / Agentes / Copiloto"** – agrupa funcionalidades de criação de projetos, grupos, snippets, gerenciamento de agentes e assistente Copilot (conforme sugerido).
+ * OBJETIVO PRINCIPAL:
+ * Gerar um blueprint completo (em formato Markdown + Mermaid) que padronize a criação, manutenção e evolução de TODOS os artefatos, repositórios, forks, branches e documentações, garantindo que qualquer pessoa (de um dev sênior a um criador de conteúdo que nunca usou Git) consiga contribuir e prosperar nesse novo sistema econômico mundial, com fácil integração com todas as ferramentas do mundo Git.
  *
- * ---
+ * INSTRUÇÕES DETALHADAS:
+ * 1. ESTRUTURA DE REPOSITÓRIOS E GOVERNANÇA (GitMoom Core): Crie uma política de Monorepo vs. Polyrepo, fluxo de Git Workflow adaptado e regras de Fork.
+ * 2. ARTEFATOS E DOCUMENTAÇÃO TÉCNICA: ADRs, Diagramas C4 (Mermaid) e padronização de APIs (OpenAPI 3.1.0).
+ * 3. DOCUMENTAÇÃO PARA CRIADORES E VIBE CODERS: Playbook de Onboarding "Do Zero ao Primeiro Commit", templates de Issue/PR focados em impacto.
+ * 4. INTEGRAÇÃO MUNDIAL: Garanta fácil integração com ferramentas Git externas (GitHub, GitLab, Bitbucket) via webhooks e APIs.
+ * 5. GOVERNANÇA ECONÔMICA: Manifesto "Win-Win-Win", sistema de Badges/Reputação On-Chain e regras para Forks Estratégicos.
  *
- * ### Requisitos gerais
- *
- * - **Layout**: sidebar esquerda fixa, com dois cabeçalhos de menu expansíveis ou separados. Ao clicar em um item, a área principal exibe o conteúdo correspondente.
- * - **Estilo**: limpo, moderno, similar ao GitLab (cores: #f0f0f0, #fff, azul #1f75cb, cinza escuro para textos).
- * - **Responsividade**: (opcional) adaptação para telas menores.
- * - **Interatividade**: navegação sem recarregar página (SPA simples com JavaScript).
- *
- * ---
- *
- * ### Estrutura dos menus
- *
- * #### Menu 1 – Configurações / Suporte
- * Itens (com base nas imagens):
- * - **Alterar nome de usuário**  
- *   - Exibe campo com caminho atual (`https://gitlab.com/kuboprotocol`)  
- *   - Botão "Atualizar nome de usuário"  
- *   - Aviso sobre efeitos colaterais (link "Saiba mais")
- * - **Contatos legais** (Legacy contacts)  
- *   - **Designated account manager** – botão "Adicionar" e indicação "Nenhum gerente designado"  
- *   - **Designated account successor** – botão "Adicionar" e indicação "Nenhum sucessor designado"  
- *   - Links "Saiba mais" para cada
- * - **Pipelines agendados que você possui**  
- *   - Lista vazia com mensagem "Você não possui pipelines agendados ativos"  
- *   - Opções para visualizar, editar ou transferir propriedade (quando houver)
- * - **Excluir conta**  
- *   - Exibe grupos dos quais o usuário é único proprietário (ex: `kuboprotocol-group`)  
- *   - Mensagem de alerta: "Você deve transferir a propriedade ou excluir estes antes de excluir sua conta"  
- *   - Botão "Excluir conta" desabilitado enquanto houver grupos
- * - **PIN de suporte**  
- *   - Mostra status "Nenhum PIN ativo"  
- *   - Botão "Gerar novo PIN"
- *
- * #### Menu 2 – Repositórios / Agentes / Copiloto
- * Itens (baseados nas imagens e títulos):
- * - **Novo projeto/repositório** – formulário para criar projeto (nome, descrição, visibilidade)
- * - **Novo grupo** – formulário para criar grupo
- * - **Novo snippet** – formulário para criar snippet
- * - **Agentes** – listagem/gerenciamento de agentes (CI/CD, etc.)
- * - **Copiloto** – configurações do assistente IA (ex: ativação, histórico)
- *
- * *(Se desejar, pode adicionar mais itens como "Pull requests", "Issues", etc., mas o foco são os presentes nas imagens)*
- *
- * ---
- *
- * ### Páginas específicas
- *
- * #### Página de login (opcional, mas incluída)
- * - Exibe mensagem: "Já existe uma conta com o e-mail do Google. Faça login com suas credenciais existentes para conectar."
- * - Campos: "Fazer login" (e-mail/senha), "Chave de acesso"
- * - Links: "Termos de Uso", "Declaração de Privacidade", "Política de Cookies", "Registre-se agora"
- * - Botões sociais: Google, GitHub, Bitbucket, Salesforce, ChatGPT
- * - Checkbox "Lembrar de mim"
- * - Seletor de idioma: Português (Brasil)
- *
- * ---
- *
- * ### Instruções técnicas
- *
- * - Utilize **HTML5**, **CSS3** e **JavaScript puro** (sem frameworks externos, ou com CDN do Bootstrap 5 se preferir).
- * - Mantenha o código bem comentado e organizado.
- * - Os dados podem ser estáticos (mockados), mas a interface deve permitir interações como cliques, mudanças de estado (ex: adicionar contato legal abre um modal ou formulário).
- * - Para o menu, use ícones (Font Awesome ou SVG) para melhor visualização.
- *
- * ---
- *
- * ### Exemplo de estrutura de arquivos (sugestão)
- *
- * - `index.html` – contém toda a estrutura (ou separado em HTML+CSS+JS)
- * - Estilos inline ou em `<style>` no cabeçalho.
- *
- * ---
- *
- * ### Entregável esperado
- *
- * Forneça o código completo de uma única página HTML que contenha:
- * - A sidebar com os dois menus colapsáveis/separados.
- * - O conteúdo principal que muda conforme o item selecionado.
- * - Todas as páginas descritas, com textos e elementos visuais conforme as imagens.
- *
- * ---
- *
- * ### Observações finais
- *
- * - O nome de usuário atual é `kuboprotocol`.
- * - As cores e fontes devem ser agradáveis e profissionais.
- * - Para a seção "Agentes" e "Copiloto", crie conteúdos exemplificativos (ex: listagem de agentes com status, opção de criar; para Copiloto, um switch de ativação e campo de chave API).
- *
- * ---
- *
- * **Agora, gere a página conforme este prompt.**
+ * MÃO NA MASSA: Execute esse plano detalhadamente, gerando o arquivo GITMOOM_ECOSYSTEM_BLUEPRINT.md com mapa mental, árvore de diretórios e checklist de criação.
  */
 
 
