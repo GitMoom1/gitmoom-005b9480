@@ -1,428 +1,85 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-// Perfeito! Você pediu e eu entregarei as **duas colunas finais** que faltavam para o Gitemo ser imbatível:
-//
-// 1. **Audit Trail Imutável (no grafo)** — cada respiro do agente vira um nó rastreável.
-// 2. **Integração com HashiCorp Vault** — segredos dinâmicos, sem hardcodes, com rotação automática.
-//
-// Com isso, o Gitemo não só bate 10 a 0 em performance, mas em **governança, compliance e segurança empresarial** — coisas que GitHub/GitLab só oferecem em planos Enterprise ultra-caros, e ainda assim de forma limitada.
-//
-// ---
-//
-// ## 🕵️ PARTE 1: AUDIT TRAIL NO GRAFO (Nós Imutáveis)
-//
-// Cada ação do agente (criar fork, rebase, merge, rollback, predizer conflito) vira um nó `AuditLog` conectado ao agente, ao fork e ao repositório afetado. Isso cria uma **cadeia de custódia forense** que nenhuma plataforma atual tem nativamente.
-//
-// ### 1.1 Modelo do Nó de Auditoria (Neo4j)
-//
-// ```cypher
-// // Estrutura do nó de auditoria
-// CREATE (al:AuditLog {
-//     id: 'audit_' + apoc.text.random(16),
-//     moon_id: 'moon-01',
-//     action: 'SEMANTIC_REBASE',
-//     resource_type: 'MoonFork',
-//     resource_id: 'fork_xyz',
-//     input_hash: sha256('{target_branch: "main"}'),  // hash dos parâmetros
-//     result_status: 'SUCCESS',
-//     duration_ms: 12,
-//     ip_address: '192.168.1.100',
-//     timestamp: datetime(),
-//     // Metadados de compliance
-//     immutable_signature: 'signature_abc123' // assinatura criptográfica opcional
-// })
-// // Conexões
-// WITH al
-// MATCH (agent:MoonAgent {id: 'moon-01'}), (fork:MoonFork {id: 'fork_xyz'})
-// CREATE (agent)-[:PERFORMED]->(al)-[:AFFECTED]->(fork)
-// ```
-//
-// ### 1.2 Serviço de Auditoria no Python (Assíncrono para não bloquear)
-//
-// ```python
-// # audit_service.py
-// import hashlib
-// import json
-// from datetime import datetime
-// from neo4j import AsyncGraphDatabase
-// import asyncio
-//
-// class AuditService:
-//     def __init__(self, neo4j_uri, neo4j_user, neo4j_password):
-//         self.driver = AsyncGraphDatabase.driver(neo4j_uri, auth=(neo4j_user, neo4j_password))
-//         self.queue = asyncio.Queue()  # Fila para escrita assíncrona
-//
-//     async def log_async(self, moon_id: str, action: str, resource_type: str,
-//                         resource_id: str, params: dict, result_status: str,
-//                         duration_ms: int, ip: str = None):
-//         """Adiciona à fila e processa em background (não trava a resposta da API)"""
-//         input_hash = hashlib.sha256(json.dumps(params, sort_keys=True).encode()).hexdigest()
-//
-//         await self.queue.put({
-//             "moon_id": moon_id,
-//             "action": action,
-//             "resource_type": resource_type,
-//             "resource_id": resource_id,
-//             "input_hash": input_hash,
-//             "result_status": result_status,
-//             "duration_ms": duration_ms,
-//             "ip": ip or "0.0.0.0",
-//             "timestamp": datetime.utcnow().isoformat()
-//         })
-//
-//     async def worker(self):
-//         """Processa os logs em lote a cada 500ms ou quando a fila atinge 100 itens"""
-//         while True:
-//             batch = []
-//             try:
-//                 # Espera até 500ms por um item, mas pode pegar vários de uma vez
-//                 item = await self.queue.get()
-//                 batch.append(item)
-//                 # Tenta drenar mais itens
-//                 for _ in range(99):  # Max 100 por lote
-//                     try:
-//                         batch.append(self.queue.get_nowait())
-//                     except asyncio.QueueEmpty:
-//                         break
-//
-//                 if batch:
-//                     await self._write_batch(batch)
-//                 await asyncio.sleep(0.01)  # yield para outras tasks
-//             except Exception as e:
-//                 print(f"Erro no worker de auditoria: {e}")
-//
-//     async def _write_batch(self, batch):
-//         async with self.driver.session() as session:
-//             # Query parametrizada para inserção em lote
-//             query = """
-//             UNWIND $batch AS item
-//             CREATE (al:AuditLog {
-//                 id: 'audit_' + apoc.text.random(8),
-//                 moon_id: item.moon_id,
-//                 action: item.action,
-//                 resource_type: item.resource_type,
-//                 resource_id: item.resource_id,
-//                 input_hash: item.input_hash,
-//                 result_status: item.result_status,
-//                 duration_ms: item.duration_ms,
-//                 ip: item.ip,
-//                 timestamp: datetime(item.timestamp)
-//             })
-//             WITH al, item
-//             MATCH (agent:MoonAgent {id: item.moon_id})
-//             MATCH (resource)
-//             WHERE resource.id = item.resource_id AND labels(resource)[0] = item.resource_type
-//             CREATE (agent)-[:PERFORMED]->(al)
-//             CREATE (al)-[:AFFECTED]->(resource)
-//             """
-//             await session.run(query, {"batch": batch})
-//
-// # Inicialização global
-// audit_service = AuditService("bolt://localhost:7687", "neo4j", "password")
-// # Inicia o worker em background (no startup do FastAPI)
-//@app.on_event("startup")
-// async def start_audit_worker():
-//     asyncio.create_task(audit_service.worker())
-// ```
-//
-// ### 1.3 Decorator de Auditoria (para usar nos endpoints)
-//
-// ```python
-// # audit_decorator.py
-// import time
-// from functools import wraps
-// from fastapi import Request
-// from auth_middleware import MoonAgentAuth
-//
-// def audit_action(action_name: str, resource_type: str = "MoonFork"):
-//     def decorator(func):
-//         @wraps(func)
-//         async def wrapper(*args, **kwargs):
-//             start_time = time.time()
-//             result_status = "SUCCESS"
-//             error_msg = None
-//             moon_id = None
-//             resource_id = None
-//
-//             # Tenta extrair agente e resource_id dos argumentos (FastAPI injeta)
-//             for arg in args:
-//                 if isinstance(arg, MoonAgentAuth):
-//                     moon_id = arg.moon_id
-//                 if hasattr(arg, "fork_id"):  # Pydantic model
-//                     resource_id = arg.fork_id
-//                 if hasattr(arg, "target_repo_id"):
-//                     resource_id = arg.target_repo_id
-//
-//             # Se não achou, tenta nos kwargs
-//             if not moon_id and "agent" in kwargs:
-//                 moon_id = kwargs["agent"].moon_id
-//             if not resource_id and "data" in kwargs and hasattr(kwargs["data"], "fork_id"):
-//                 resource_id = kwargs["data"].fork_id
-//
-//             try:
-//                 result = await func(*args, **kwargs)
-//                 return result
-//             except Exception as e:
-//                 result_status = "FAILURE"
-//                 error_msg = str(e)
-//                 raise  # re-raise após logar
-//             finally:
-//                 duration_ms = int((time.time() - start_time) * 1000)
-//                 params = {k: str(v) for k, v in kwargs.items() if k not in ["agent"]}
-//                 # Loga assíncrono
-//                 await audit_service.log_async(
-//                     moon_id=moon_id or "unknown",
-//                     action=action_name,
-//                     resource_type=resource_type,
-//                     resource_id=resource_id or "unknown",
-//                     params=params,
-//                     result_status=result_status,
-//                     duration_ms=duration_ms,
-//                     ip=getattr(args[0], "client", {}).get("host") if args else None
-//                 )
-//         return wrapper
-//     return decorator
-//
-// # Uso no endpoint
-//@app.post("/moon/fork/action")
-//@audit_action("SEMANTIC_REBASE", "MoonFork")
-// async def execute_action(data: ActionRequest, agent: MoonAgentAuth = Depends(get_current_agent)):
-//     # ... lógica normal ...
-// ```
-//
-// ---
-//
-// ## 🔐 PARTE 2: HASHICORP VAULT (Segredos Dinâmicos)
-//
-// Nunca mais hardcode `SECRET_KEY`, senha do Neo4j ou Client Secret. O Gitemo busca tudo do Vault na inicialização e renova periodicamente.
-//
-// ### 2.1 Configuração do Vault (Setup Inicial)
-//
-// ```bash
-// # Inicia o Vault em modo dev (para teste)
-// vault server -dev -dev-root-token-id="root"
-//
-// # Coloca os segredos do Gitemo
-// vault kv put secret/gitemo/jwt secret_key="moon_super_secret_2026" algorithm="HS256"
-// vault kv put secret/gitemo/neo4j uri="bolt://localhost:7687" username="neo4j" password="ultra_secret_password"
-// vault kv put secret/gitemo/oauth client_id="moon_client" client_secret="moon_secret"
-// ```
-//
-// ### 2.2 Cliente Vault no Python (com cache e renew)
-//
-// ```python
-// # vault_client.py
-// import hvac
-// import os
-// import json
-// from threading import Lock
-//
-// class VaultClient:
-//     _instance = None
-//     _lock = Lock()
-//
-//     def __new__(cls):
-//         if cls._instance is None:
-//             with cls._lock:
-//                 if cls._instance is None:
-//                     cls._instance = super().__new__(cls)
-//                     cls._instance._initialized = False
-//         return cls._instance
-//
-//     def __init__(self):
-//         if self._initialized:
-//             return
-//         self.client = hvac.Client(
-//             url=os.getenv("VAULT_ADDR", "http://localhost:8200"),
-//             token=os.getenv("VAULT_TOKEN", "root")
-//         )
-//         self.cache = {}
-//         self._initialized = True
-//
-//     def get_secret(self, path: str, key: str) -> str:
-//         """Busca do cache ou do Vault, com TTL de 5 minutos."""
-//         cache_key = f"{path}:{key}"
-//         if cache_key in self.cache:
-//             data, timestamp = self.cache[cache_key]
-//             if (datetime.utcnow() - timestamp).seconds < 300:  # 5 min
-//                 return data
-//
-//         # Busca no Vault
-//         try:
-//             response = self.client.secrets.kv.v2.read_secret_version(path=path)
-//             secret = response['data']['data'][key]
-//             self.cache[cache_key] = (secret, datetime.utcnow())
-//             return secret
-//         except Exception as e:
-//             raise RuntimeError(f"Erro ao buscar {path}/{key} do Vault: {e}")
-//
-// # Singleton global
-// vault = VaultClient()
-// ```
-//
-// ### 2.3 Substituindo hardcodes no sistema
-//
-// **Antes (auth_config.py)**:
-// ```python
-// SECRET_KEY = "moon_super_secret_2026"  # ❌ Hardcoded
-// ```
-//
-// **Depois (auth_config.py)**:
-// ```python
-// from vault_client import vault
-//
-// SECRET_KEY = vault.get_secret("secret/gitemo/jwt", "secret_key")
-// ALGORITHM = vault.get_secret("secret/gitemo/jwt", "algorithm")
-// ```
-//
-// **Antes (moon_graph_service.py)**:
-// ```python
-// self.neo4j_driver = GraphDatabase.driver("bolt://localhost:7687", auth=("neo4j", "password"))
-// ```
-//
-// **Depois**:
-// ```python
-// from vault_client import vault
-// neo4j_uri = vault.get_secret("secret/gitemo/neo4j", "uri")
-// neo4j_user = vault.get_secret("secret/gitemo/neo4j", "username")
-// neo4j_pass = vault.get_secret("secret/gitemo/neo4j", "password")
-// self.neo4j_driver = GraphDatabase.driver(neo4j_uri, auth=(neo4j_user, neo4j_pass))
-// ```
-//
-// ### 2.4 Cliente Vault em Go (com suporte a renovação automática)
-//
-// ```go
-// // vault_go.go
-// package main
-//
-// import (
-// 	"encoding/json"
-// 	"fmt"
-// 	"log"
-// 	"os"
-// 	"sync"
-// 	"time"
-//
-// 	"github.com/hashicorp/vault/api"
-// )
-//
-// type VaultClient struct {
-// 	client *api.Client
-// 	cache  map[string]CachedSecret
-// 	mu     sync.RWMutex
-// }
-//
-// type CachedSecret struct {
-// 	Value     string
-// 	Timestamp time.Time
-// }
-//
-// var vaultInstance *VaultClient
-// var vaultOnce sync.Once
-//
-// func GetVaultClient() *VaultClient {
-// 	vaultOnce.Do(func() {
-// 		config := api.DefaultConfig()
-// 		config.Address = os.Getenv("VAULT_ADDR")
-// 		client, err := api.NewClient(config)
-// 		if err != nil {
-// 			log.Fatalf("Erro criando Vault client: %v", err)
-// 		}
-// 		client.SetToken(os.Getenv("VAULT_TOKEN"))
-// 		vaultInstance = &VaultClient{
-// 			client: client,
-// 			cache:  make(map[string]CachedSecret),
-// 		}
-// 	})
-// 	return vaultInstance
-// }
-//
-// func (v *VaultClient) GetSecret(path, key string) (string, error) {
-// 	cacheKey := fmt.Sprintf("%s:%s", path, key)
-//
-// 	// Verifica cache
-// 	v.mu.RLock()
-// 	cached, ok := v.cache[cacheKey]
-// 	v.mu.RUnlock()
-// 	if ok && time.Since(cached.Timestamp) < 5*time.Minute {
-// 		return cached.Value, nil
-// 	}
-//
-// 	// Busca no Vault
-// 	secret, err := v.client.KVv2("secret").Get(path)
-// 	if err != nil {
-// 		return "", fmt.Errorf("erro no Vault: %w", err)
-// 	}
-//
-// 	data, ok := secret.Data["data"].(map[string]interface{})
-// 	if !ok {
-// 		return "", fmt.Errorf("formato inesperado no Vault")
-// 	}
-// 	value, ok := data[key].(string)
-// 	if !ok {
-// 		return "", fmt.Errorf("chave %s não encontrada em %s", key, path)
-// 	}
-//
-// 	// Atualiza cache
-// 	v.mu.Lock()
-// 	v.cache[cacheKey] = CachedSecret{Value: value, Timestamp: time.Now()}
-// 	v.mu.Unlock()
-//
-// 	return value, nil
-// }
-//
-// // Uso no main.go
-// func initSecrets() {
-// 	vault := GetVaultClient()
-// 	jwtSecret, _ := vault.GetSecret("secret/gitemo/jwt", "secret_key")
-// 	fmt.Printf("JWT Secret carregado do Vault (tamanho: %d)\n", len(jwtSecret))
-// 	// Atribui à variável global do middleware
-// 	jwtSecretGlobal = []byte(jwtSecret)
-// }
-// ```
-//
-// ### 2.5 Rotação Automática de Segredos (Vault Agent)
-//
-// Para uma verdadeira segurança 10x, configuramos o **Vault Agent** para renovar tokens automaticamente:
-//
-// ```hcl
-// # vault-agent-config.hcl
-// pid_file = "/tmp/vault-agent-pid"
-//
-// vault {
-//   address = "http://vault:8200"
-//   token   = "root"  # Em produção, usa AppRole ou AWS IAM
-// }
-//
-// auto_auth {
-//   method "token" {
-//     config {
-//       token = "root"
-//     }
-//   }
-// }
-//
-// template {
-//   source      = "/etc/gitemo/secrets.tpl"
-//   destination = "/etc/gitemo/secrets.env"
-//   command     = "docker exec gitemo-api supervisorctl restart api"
-// }
-// ```
-//
-// ---
-//
-// ## 🏆 POR QUE ISSO FECHA O 10 A 0 (TABELA FINAL)
-//
-// | Requisito | GitHub/GitLab | Gitemo + Grafo + Vault + Audit |
-// |-----------|---------------|-------------------------------|
-// | **Performance (merge)** | 15 min manual | **2s (automático via caminho no grafo)** |
-// | **Concorrência** | ~50 forks | **10.000+ (Go + RedisGraph)** |
-// | **Segurança de tokens** | Hardcoded nos devs | **Vault com rotação automática** |
-// | **Rastreabilidade** | Logs brutos no servidor | **Audit Trail imutável no grafo** (forense) |
-// | **Permissão granular** | Read/Write por repo | **Escopos por aresta e ação (RBAC)** |
-// | **Notificação em tempo real** | Webhooks (polling) | **WebSocket + Redis Pub/Sub (< 50ms)** |
-// | **Custo de auditoria (SOC2)** | U$ 50k/ano (ferramentas externas) | **Nativo no grafo (zero custo extra)** |
-//
-// ---
+/**
+ * **Prompt para criar sistema de login e criação de conta com antifraude (inspirado no GitMoon)**
+ *
+ * ---
+ *
+ * **Contexto:**  
+ * Preciso desenvolver um sistema completo de autenticação para a plataforma **GitMoon** (slogan: "Code Beyond Limits"), que inclua páginas de **login**, **registro de novas contas** e **recuperação de senha**, com forte ênfase em **medidas antifraude**. O design deve ser clean, moderno e semelhante ao das imagens de referência (estilo GitHub, com campos para usuário/e-mail, senha, "lembrar-me", link para "esqueci a senha", botão de login, chave de acesso, termos de uso e privacidade, e link para registro).
+ *
+ * ---
+ *
+ * **Requisitos funcionais:**
+ *
+ * 1. **Página de Login**  
+ *    - Campo: Nome de usuário ou e-mail principal.  
+ *    - Campo: Senha (com opção de mostrar/ocultar).  
+ *    - Checkbox "Lembrar de mim" (persiste sessão com cookie seguro).  
+ *    - Link "Esqueceu sua senha?" → redireciona para fluxo de recuperação.  
+ *    - Botão "Fazer login".  
+ *    - Opção "Chave de acesso" (passkey / WebAuthn) para login sem senha.  
+ *    - Rodapé com links para Termos de Uso, Declaração de Privacidade e Política de Cookies.  
+ *    - Link "Ainda não tem uma conta? Registre-se agora" → redireciona para registro.
+ *
+ * 2. **Página de Registro**  
+ *    - Campos: Nome completo, Nome de usuário (único), E-mail (validado), Senha (com requisitos de força), Confirmação de senha.  
+ *    - Validação em tempo real (front-end) e no back-end.  
+ *    - Envio de e-mail de confirmação com link de ativação (token temporário).  
+ *    - Após confirmação, redirecionar para login.
+ *
+ * 3. **Recuperação de senha**  
+ *    - Solicitar e-mail ou nome de usuário.  
+ *    - Enviar link temporário para redefinição (token com expiração).  
+ *    - Página para nova senha com confirmação.
+ *
+ * 4. **Chave de acesso (Passkey)**  
+ *    - Integrar with WebAuthn para permitir login biométrico ou com PIN, como alternativa à senha.
+ *
+ * ---
+ *
+ * **Requisitos de segurança e antifraude (obrigatórios):**
+ *
+ * - **Limitação de tentativas de login** (ex: 5 tentativas falhas em 15 minutos → bloquear IP/usuário por 30 min, com aumento progressivo).  
+ * - **CAPTCHA** (reCAPTCHA v3 ou hCaptcha) nas páginas de login e registro, acionado após falhas ou em comportamentos suspeitos.  
+ * - **Verificação de e-mail** obrigatória antes do primeiro login.  
+ * - **Detecção de atividades anômalas**:  
+ *   - Geolocalização e comparação com histórico de IPs.  
+ *   - Alertas em caso de login de dispositivo ou localização não reconhecida (enviar e-mail/SMS com opção de bloquear).  
+ * - **Proteção contra força bruta** com backoff exponencial.  
+ * - **Hash de senha** usando bcrypt ou Argon2.  
+ * - **Uso de TLS/HTTPS** em toda a comunicação.  
+ * - **Cookies seguros** (HttpOnly, Secure, SameSite=Strict).  
+ * - **Tokens JWT** com tempo de vida curto e refresh token rotativo.  
+ * - **Monitoramento de múltiplas sessões** (opção de revogar todas as sessões ativas).  
+ * - **Rate limiting** por IP e por usuário para endpoints sensíveis.  
+ * - **Validação anti-bot** no registro (ex: verificação de e-mail descartável, bloqueio de domínios temporários).  
+ * - **Logs de auditoria** de todas as ações de autenticação (com dados anonimizados).  
+ * - **Mecanismo de "força bruta de 2FA"** – se habilitado, exigir segundo fator (TOTP ou SMS) em logins suspeitos.
+ *
+ * ---
+ *
+ * **Requisitos técnicos (sugestão – você pode adaptar):**  
+ * - Frontend: React/Vue com componentes estilizados (CSS Modules ou Tailwind) seguindo o design das imagens.  
+ * - Backend: Node.js (Express) ou Python (Django/Flask) ou Java (Spring).  
+ * - Banco de dados: PostgreSQL ou MongoDB (com índices para busca rápida).  
+ * - Cache: Redis para rate limiting, bloqueios temporários e sessões.  
+ * - Envio de e-mails: serviço transacional (SendGrid, AWS SES).  
+ * - WebAuthn: bibliotecas como `@simplewebauthn/server` e `@simplewebauthn/browser`.  
+ *
+ * ---
+ *
+ * **Entregável esperado:**  
+ * Gere um **código-fonte completo** (frontend + backend) com todos os endpoints, validações, integração antifraude, e uma documentação resumida explicando as medidas implementadas. Inclua também instruções de configuração (variáveis de ambiente, migrações de banco, chaves de API para CAPTCHA e e-mail). O código deve ser modular, seguro e pronto para deploy em ambiente de produção.
+ *
+ * ---
+ *
+ * **Observações finais:**  
+ * - O design deve ser fiel à identidade visual do GitMoon (cores escuras, tipografia moderna, ícones minimalistas).  
+ * - As mensagens de erro devem ser genéricas para não vazar informações (ex: "Credenciais inválidas" em vez de "Usuário não encontrado").  
+ * - Todos os formulários devem ser acessíveis (ARIA labels, navegação por teclado).  
+ * - Priorize boas práticas de OWASP para autenticação.
+ */
+
 import { useServerFn } from "@tanstack/react-start";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
