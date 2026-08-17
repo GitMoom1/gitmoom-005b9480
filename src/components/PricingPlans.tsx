@@ -11,6 +11,7 @@ interface PricingPlan {
   desc: string;
   features: string[];
   priceId: string;
+  priceIdYearly: string;
   cta: string;
   featured?: boolean;
 }
@@ -30,6 +31,7 @@ const plans: PricingPlan[] = [
       "Review IA básico",
     ],
     priceId: "free",
+    priceIdYearly: "free",
     cta: "Começar grátis",
     featured: false,
   },
@@ -48,6 +50,7 @@ const plans: PricingPlan[] = [
       "Review IA avançado",
     ],
     priceId: "gitmoon_pro_monthly",
+    priceIdYearly: "gitmoon_pro_yearly",
     cta: "Assinar Pro",
     featured: true,
   },
@@ -66,13 +69,14 @@ const plans: PricingPlan[] = [
       "Exportação de dados",
     ],
     priceId: "gitmoon_business_monthly",
+    priceIdYearly: "gitmoon_business_yearly",
     cta: "Assinar Business",
     featured: false,
   },
 ];
 
-export function PricingPlans({ onSelectPlan, billingInterval = "MONTHLY" }: { 
-  onSelectPlan: (plan: PricingPlan) => void;
+export function PricingPlans({ onSelectPlan, billingInterval = "MONTHLY" }: {
+  onSelectPlan: (plan: PricingPlan & { selectedPriceId: string }) => void;
   billingInterval?: "MONTHLY" | "YEARLY";
 }) {
   return (
@@ -113,7 +117,12 @@ export function PricingPlans({ onSelectPlan, billingInterval = "MONTHLY" }: {
           </ul>
           <button
             type="button"
-            onClick={() => onSelectPlan(p)}
+            onClick={() =>
+              onSelectPlan({
+                ...p,
+                selectedPriceId: billingInterval === "MONTHLY" ? p.priceId : p.priceIdYearly,
+              })
+            }
             className={`mt-8 inline-flex w-full items-center justify-center gap-1.5 rounded-full px-5 py-3 text-sm font-medium transition ${
               p.featured
                 ? "bg-background text-foreground hover:bg-background/90"
