@@ -22,6 +22,50 @@ function resolvePriceId(item: any): string | undefined {
   );
 }
 
+const PRICE_TIERS: Record<string, "PRO" | "BUSINESS"> = {
+  gitmoon_pro_monthly: "PRO",
+  gitmoon_pro_yearly: "PRO",
+  gitmoon_business_monthly: "BUSINESS",
+  gitmoon_business_yearly: "BUSINESS",
+};
+
+function resolveTier(priceId: string | undefined): "STARTER" | "PRO" | "BUSINESS" {
+  return (priceId && PRICE_TIERS[priceId]) || "STARTER";
+}
+
+const ENTITLED_STATUSES = new Set(["active", "trialing", "past_due"]);
+
+/**
+ * Aplica os limites do plano (tokens, repositórios, validade) para o usuário.
+ * Upgrade vale imediatamente; cancelamento mantém acesso até o fim do ciclo.
+ */
+async function applyEntitlements(
+  userId: string,
+  tier: "STARTER" | "PRO" | "BUSINESS",
+  periodEnd: string | null,
+  reference: string,
+) {
+  const supabase = getSupabase() as any;
+  const { error } = await supabase.rpc("apply_plan_entitlements", {
+    _user_id: userId,
+    _tier: tier,
+    _period_end: periodEnd,
+    _reference: reference,
+  });
+  if (error) console.error("apply_plan_entitlements failed", error);
+}
+
+async function findUserId(subscription: any): Promise<string | undefined> {
+  if (subscription.metadata?.userId) return subscription.metadata.userId;
+  const supabase = getSupabase() as any;
+  const { data } = await supabase
+    .from("subscriptions")
+    .select("user_id")
+    .eq("stripe_subscription_id", subscription.id)
+    .maybeSingle();
+  return data?.user_id;
+}
+
 async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
   const userId = subscription.metadata?.userId;
   if (!userId) {
@@ -32,6 +76,9 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
   const item = subscription.items?.data?.[0];
   const periodStart = item?.current_period_start ?? subscription.current_period_start;
   const periodEnd = item?.current_period_end ?? subscription.current_period_end;
+  const priceId = resolvePriceId(item);
+  const tier = resolveTier(priceId);
+  const periodEndIso = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
 
   const supabase = getSupabase() as any;
   await supabase.from("subscriptions").upsert(
@@ -40,21 +87,29 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
       stripe_subscription_id: subscription.id,
       stripe_customer_id: subscription.customer,
       product_id: item?.price?.product,
-      price_id: resolvePriceId(item),
+      price_id: priceId,
+      plan_tier: tier,
       status: subscription.status,
       current_period_start: periodStart ? new Date(periodStart * 1000).toISOString() : null,
-      current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+      current_period_end: periodEndIso,
       environment: env,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "stripe_subscription_id" },
   );
+
+  if (ENTITLED_STATUSES.has(subscription.status)) {
+    await applyEntitlements(userId, tier, periodEndIso, subscription.id);
+  }
 }
 
 async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
   const item = subscription.items?.data?.[0];
   const periodStart = item?.current_period_start ?? subscription.current_period_start;
   const periodEnd = item?.current_period_end ?? subscription.current_period_end;
+  const priceId = resolvePriceId(item);
+  const tier = resolveTier(priceId);
+  const periodEndIso = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
 
   const supabase = getSupabase() as any;
   await supabase
@@ -62,14 +117,25 @@ async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
     .update({
       status: subscription.status,
       product_id: item?.price?.product,
-      price_id: resolvePriceId(item),
+      price_id: priceId,
+      plan_tier: tier,
       current_period_start: periodStart ? new Date(periodStart * 1000).toISOString() : null,
-      current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+      current_period_end: periodEndIso,
       cancel_at_period_end: subscription.cancel_at_period_end || false,
       updated_at: new Date().toISOString(),
     })
     .eq("stripe_subscription_id", subscription.id)
     .eq("environment", env);
+
+  const userId = await findUserId(subscription);
+  if (!userId) return;
+
+  if (ENTITLED_STATUSES.has(subscription.status)) {
+    // Upgrade/downgrade de preço e renovação: reaplica limites do plano atual.
+    await applyEntitlements(userId, tier, periodEndIso, subscription.id);
+  } else {
+    await applyEntitlements(userId, "STARTER", null, subscription.id);
+  }
 }
 
 async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
@@ -79,6 +145,10 @@ async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
     .update({ status: "canceled", updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", subscription.id)
     .eq("environment", env);
+
+  // Cancelamento efetivo (fim do ciclo já ocorreu): volta para Starter.
+  const userId = await findUserId(subscription);
+  if (userId) await applyEntitlements(userId, "STARTER", null, subscription.id);
 }
 
 async function handleWebhook(req: Request, env: StripeEnv) {
