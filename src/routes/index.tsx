@@ -504,11 +504,11 @@ release:
         <PricingPlans 
           billingInterval={billingInterval}
           onSelectPlan={(p) => {
-            if (p.priceId === "free") {
+            if (p.selectedPriceId === "free") {
               window.location.hash = "cta";
             } else {
               openCheckout({
-                priceId: p.priceId,
+                priceId: p.selectedPriceId,
                 quantity: 1,
                 customerEmail: user?.email,
                 userId: user?.id,
