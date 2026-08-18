@@ -38,7 +38,7 @@ function IntegrationsPage() {
       });
       integrationsQuery.refetch();
       toast.success("GitHub connected successfully!");
-    } catch (error) {
+    } catch {
       toast.error("Failed to connect GitHub");
     }
   };
@@ -97,14 +97,14 @@ function IntegrationsPage() {
         {integrationsQuery.data.length === 0 ? (
           <Card className="border-dashed">
             <CardContent className="py-12 text-center text-muted-foreground">
-              < ShieldCheck className="h-10 w-10 mx-auto mb-3 opacity-20" />
+              <ShieldCheck className="h-10 w-10 mx-auto mb-3 opacity-20" />
               <p>No active integrations found.</p>
               <p className="text-xs mt-1">Connect a service above to get started.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid gap-4">
-            {integrationsQuery.data.map((int: any) => (
+            {integrationsQuery.data.map((int: { id: string; type: string; name: string; created_at: string }) => (
               <Card key={int.id}>
                 <CardContent className="flex items-center justify-between py-4">
                   <div className="flex items-center gap-4">

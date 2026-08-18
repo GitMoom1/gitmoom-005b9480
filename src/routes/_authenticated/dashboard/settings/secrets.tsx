@@ -41,7 +41,7 @@ function SecretsPage() {
       setName('');
       setValue('');
       secretsQuery.refetch();
-    } catch (error) {
+    } catch {
       toast.error('Failed to create secret');
     }
   };
@@ -86,7 +86,7 @@ function SecretsPage() {
             </CardContent>
           </Card>
         ) : (
-          secretsQuery.data.map((secret: any) => (
+          secretsQuery.data.map((secret: { id: string; name: string; environment: string; encrypted_value: string }) => (
             <Card key={secret.id}>
               <CardContent className="flex items-center justify-between py-4">
                 <div className="flex items-center gap-4">

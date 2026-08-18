@@ -14,23 +14,23 @@ export const createOrganization = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Create the organization
-    const { data: org, error: orgError } = await (supabaseAdmin
-      .from("organizations" as any)
+    const { data: org, error: orgError } = await supabaseAdmin
+      .from("organizations")
       .insert({
         name: data.name,
         slug: data.slug,
         description: data.description || null,
         plan: "free",
         visibility: "PUBLIC"
-      } as any)
+      })
       .select()
-      .single() as any);
+      .single();
 
     if (orgError) throw new Error(orgError.message);
 
     // Create default settings
-    const { error: settingsError } = await (supabaseAdmin
-      .from("organization_settings" as any)
+    const { error: settingsError } = await supabaseAdmin
+      .from("organization_settings")
       .insert({
         organization_id: org.id,
         visibility: "INTERNAL",
@@ -39,7 +39,7 @@ export const createOrganization = createServerFn({ method: "POST" })
         public_visibility: "INTERNAL",
         internal_visibility: "INTERNAL",
         private_visibility: "PRIVATE"
-      } as any) as any);
+      });
 
     if (settingsError) throw new Error(settingsError.message);
 
@@ -50,8 +50,8 @@ export const getOrganization = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ slug: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: org, error } = await (supabaseAdmin
-      .from("organizations" as any)
+    const { data: org, error } = await supabaseAdmin
+      .from("organizations")
       .select(`
         *,
         organization_settings (*),
@@ -60,7 +60,7 @@ export const getOrganization = createServerFn({ method: "GET" })
         )
       `)
       .eq("slug", data.slug)
-      .single() as any);
+      .single();
 
     if (error) throw new Error(error.message);
     return org;
@@ -78,7 +78,7 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     let query = supabaseAdmin
-      .from("repositories" as any)
+      .from("repositories")
       .select("*")
       .eq("organization_id", data.orgId);
 
@@ -107,7 +107,7 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
         break;
     }
 
-    const { data: repos, error } = await (query as any);
+    const { data: repos, error } = await query;
     if (error) throw new Error(error.message);
     return repos;
   });
@@ -117,15 +117,15 @@ export const updateOrganizationSettings = createServerFn({ method: "POST" })
     (data: unknown) =>
       z.object({
         orgId: z.string(),
-        settings: z.any(),
+        settings: z.record(z.unknown()),
       }).parse(data)
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await (supabaseAdmin
-      .from("organization_settings" as any)
+    const { error } = await supabaseAdmin
+      .from("organization_settings")
       .update(data.settings)
-      .eq("organization_id", data.orgId) as any);
+      .eq("organization_id", data.orgId);
 
     if (error) throw new Error(error.message);
     return { success: true };
@@ -141,10 +141,10 @@ export const toggleRepoArchive = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await (supabaseAdmin
-      .from("repositories" as any)
-      .update({ is_archived: data.archived } as any)
-      .eq("id", data.repoId) as any);
+    const { error } = await supabaseAdmin
+      .from("repositories")
+      .update({ is_archived: data.archived })
+      .eq("id", data.repoId);
 
     if (error) throw new Error(error.message);
     return { success: true };
@@ -162,21 +162,21 @@ export const transferRepoToOrg = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Check if plan allows transfer
-    const { data: org, error: orgError } = await (supabaseAdmin
-      .from("organizations" as any)
+    const { data: org, error: orgError } = await supabaseAdmin
+      .from("organizations")
       .select("plan")
       .eq("id", data.targetOrgId)
-      .single() as any);
+      .single();
 
     if (orgError) throw new Error("Target organization not found");
-    if (org.plan === 'free') {
+    if (org?.plan === 'free') {
       throw new Error("Repository transfer requires a paid plan (Eclipse, Galaxy, or Supernova)");
     }
 
-    const { error } = await (supabaseAdmin
-      .from("repositories" as any)
-      .update({ organization_id: data.targetOrgId } as any)
-      .eq("id", data.repoId) as any);
+    const { error } = await supabaseAdmin
+      .from("repositories")
+      .update({ organization_id: data.targetOrgId })
+      .eq("id", data.repoId);
 
     if (error) throw new Error(error.message);
     return { success: true };

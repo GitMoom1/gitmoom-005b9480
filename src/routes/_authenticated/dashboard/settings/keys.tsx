@@ -41,7 +41,7 @@ function KeysPage() {
       setName('');
       setPublicKey('');
       keysQuery.refetch();
-    } catch (error) {
+    } catch {
       toast.error('Failed to add SSH key');
     }
   };
@@ -85,7 +85,7 @@ function KeysPage() {
             </CardContent>
           </Card>
         ) : (
-          keysQuery.data.map((key: any) => (
+          keysQuery.data.map((key: { id: string; name: string; fingerprint: string; public_key: string }) => (
             <Card key={key.id}>
               <CardContent className="flex items-center justify-between py-4">
                 <div className="flex items-center gap-4">

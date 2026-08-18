@@ -43,7 +43,7 @@ function ApiKeysPage() {
       setNewKeyName('');
       keysQuery.refetch();
       toast.success('API key created successfully');
-    } catch (error) {
+    } catch {
       toast.error('Failed to create API key');
     } finally {
       setIsCreating(false);
@@ -55,7 +55,7 @@ function ApiKeysPage() {
       await revokeKeyFn({ data: { id } });
       keysQuery.refetch();
       toast.success('API key revoked');
-    } catch (error) {
+    } catch {
       toast.error('Failed to revoke API key');
     }
   };
@@ -133,7 +133,7 @@ function ApiKeysPage() {
           </Card>
         ) : (
           <div className="grid gap-4">
-            {keysQuery.data.map((key: any) => (
+            {keysQuery.data.map((key: { id: string; status: string; name: string; key_preview: string; created_at: string }) => (
               <Card key={key.id} className={key.status === 'REVOKED' ? 'opacity-50' : ''}>
                 <CardContent className="flex items-center justify-between py-4">
                   <div className="space-y-1">
