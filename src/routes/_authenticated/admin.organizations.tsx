@@ -15,6 +15,24 @@ import {
   transferRepoToOrg
 } from "@/lib/organizations.functions";
 
+interface Organization {
+  id: string;
+  name: string;
+  visibility: string;
+  plan: string;
+  organization_settings?: Array<Record<string, unknown>>;
+}
+
+interface Repository {
+  id: string;
+  name: string;
+  description: string;
+  visibility: string;
+  is_archived: boolean;
+  is_fork: boolean;
+  is_template: boolean;
+}
+
 export const Route = createFileRoute("/_authenticated/admin/organizations")({
   component: OrganizationManager,
 });
@@ -26,7 +44,7 @@ function OrganizationManager() {
   const fetchOrg = useServerFn(getOrganization);
   const saveSettings = useServerFn(updateOrganizationSettings);
 
-  const [org, setOrg] = useState<any>(null);
+  const [org, setOrg] = useState<Organization | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -39,20 +57,21 @@ function OrganizationManager() {
     try {
       const data = await fetchOrg({ data: { slug: orgSlug } });
       setOrg(data);
-    } catch (error) {
-      console.error("Failed to load organization:", error);
+    } catch {
+      console.error("Failed to load organization");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleUpdateSettings = async (newSettings: any) => {
+  const handleUpdateSettings = async (newSettings: Record<string, unknown>) => {
+    if (!org) return;
     setIsSaving(true);
     try {
       await saveSettings({ data: { orgId: org.id, settings: newSettings } });
       await loadOrg();
       alert("Settings saved successfully!");
-    } catch (error) {
+    } catch {
       alert("Failed to save settings");
     } finally {
       setIsSaving(false);
@@ -115,21 +134,21 @@ function OrganizationManager() {
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-8">
-        {view === "dashboard" ? (
+        {view === "dashboard" && org ? (
           <RepositoryListView org={org} />
-        ) : (
+        ) : org ? (
           <SettingsView org={org} onSave={handleUpdateSettings} isSaving={isSaving} />
-        )}
+        ) : null}
       </div>
     </div>
   );
 }
 
-function RepositoryListView({ org }: { org: any }) {
+function RepositoryListView({ org }: { org: Organization }) {
   const fetchRepos = useServerFn(getOrganizationRepos);
   const archiveRepo = useServerFn(toggleRepoArchive);
   
-  const [repos, setRepos] = useState<any[]>([]);
+  const [repos, setRepos] = useState<Repository[]>([]);
   const [activeFilter, setActiveFilter] = useState("all");
   const [showArchived, setShowArchived] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -143,8 +162,8 @@ function RepositoryListView({ org }: { org: any }) {
     try {
       const data = await fetchRepos({ data: { orgId: org.id, filter: activeFilter, showArchived } });
       setRepos(data);
-    } catch (error) {
-      console.error("Failed to load repos:", error);
+    } catch {
+      console.error("Failed to load repos");
     } finally {
       setLoading(false);
     }
@@ -154,7 +173,7 @@ function RepositoryListView({ org }: { org: any }) {
     try {
       await archiveRepo({ data: { repoId, archived: !currentStatus } });
       loadRepos();
-    } catch (error) {
+    } catch {
       alert("Error updating repository");
     }
   };
@@ -232,8 +251,19 @@ function RepositoryListView({ org }: { org: any }) {
   );
 }
 
-function SettingsView({ org, onSave, isSaving }: { org: any, onSave: (s: any) => void, isSaving: boolean }) {
-  const [settings, setSettings] = useState(org.organization_settings?.[0] || {
+interface SettingsObject {
+  visibility?: string;
+  allow_forks?: boolean;
+  allow_templates?: boolean;
+  public_visibility?: string;
+  internal_visibility?: string;
+  private_visibility?: string;
+  fork_visibility?: string;
+  template_visibility?: string;
+}
+
+function SettingsView({ org, onSave, isSaving }: { org: Organization; onSave: (s: SettingsObject) => void; isSaving: boolean }) {
+  const [settings, setSettings] = useState<SettingsObject>(org.organization_settings?.[0] as SettingsObject || {
     visibility: 'INTERNAL',
     allow_forks: true,
     allow_templates: true,
@@ -266,9 +296,9 @@ function SettingsView({ org, onSave, isSaving }: { org: any, onSave: (s: any) =>
         <h3 className="text-xl font-bold flex items-center gap-2 mb-6"><Shield className="h-5 w-5 text-primary" /> Repository Permissions</h3>
         <div className="space-y-6">
           {[
-            { label: "Public Repos", key: "public_visibility" },
-            { label: "Internal Repos", key: "internal_visibility" },
-            { label: "Private Repos", key: "private_visibility" }
+            { label: "Public Repos", key: "public_visibility" as const },
+            { label: "Internal Repos", key: "internal_visibility" as const },
+            { label: "Private Repos", key: "private_visibility" as const }
           ].map((item) => (
             <div key={item.key} className="flex items-center justify-between">
               <span className="font-medium text-sm">{item.label} Default</span>
@@ -318,4 +348,3 @@ function SettingsView({ org, onSave, isSaving }: { org: any, onSave: (s: any) =>
     </div>
   );
 }
-
