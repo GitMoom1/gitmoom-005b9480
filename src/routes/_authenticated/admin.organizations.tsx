@@ -64,7 +64,7 @@ function OrganizationManager() {
     }
   };
 
-  const handleUpdateSettings = async (newSettings: Record<string, unknown>) => {
+  const handleUpdateSettings = async (newSettings: SettingsObject) => {
     if (!org) return;
     setIsSaving(true);
     try {
