@@ -14,7 +14,7 @@ export const createOrganization = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Create the organization
-    const { data: org, error: orgError } = await supabaseAdmin
+    const { data: org, error: orgError } = await (supabaseAdmin as any)
       .from("organizations")
       .insert({
         name: data.name,
@@ -29,7 +29,7 @@ export const createOrganization = createServerFn({ method: "POST" })
     if (orgError) throw new Error(orgError.message);
 
     // Create default settings
-    const { error: settingsError } = await supabaseAdmin
+    const { error: settingsError } = await (supabaseAdmin as any)
       .from("organization_settings")
       .insert({
         organization_id: org.id,
@@ -50,7 +50,7 @@ export const getOrganization = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ slug: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: org, error } = await supabaseAdmin
+    const { data: org, error } = await (supabaseAdmin as any)
       .from("organizations")
       .select(`
         *,
@@ -77,11 +77,11 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    let query = supabaseAdmin
+    let query = (supabaseAdmin as any)
       .from("repositories")
       .select("*")
       .eq("organization_id", data.orgId);
-
+    
     if (!data.showArchived) {
       query = query.eq("is_archived", false);
     }
@@ -122,7 +122,7 @@ export const updateOrganizationSettings = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from("organization_settings")
       .update(data.settings)
       .eq("organization_id", data.orgId);
@@ -141,7 +141,7 @@ export const toggleRepoArchive = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from("repositories")
       .update({ is_archived: data.archived })
       .eq("id", data.repoId);
@@ -162,7 +162,7 @@ export const transferRepoToOrg = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Check if plan allows transfer
-    const { data: org, error: orgError } = await supabaseAdmin
+    const { data: org, error: orgError } = await (supabaseAdmin as any)
       .from("organizations")
       .select("plan")
       .eq("id", data.targetOrgId)
@@ -173,7 +173,7 @@ export const transferRepoToOrg = createServerFn({ method: "POST" })
       throw new Error("Repository transfer requires a paid plan (Eclipse, Galaxy, or Supernova)");
     }
 
-    const { error } = await supabaseAdmin
+    const { error } = await (supabaseAdmin as any)
       .from("repositories")
       .update({ organization_id: data.targetOrgId })
       .eq("id", data.repoId);

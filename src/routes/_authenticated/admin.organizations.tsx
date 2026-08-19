@@ -55,7 +55,7 @@ function OrganizationManager() {
   const loadOrg = async () => {
     setIsLoading(true);
     try {
-      const data = await fetchOrg({ data: { slug: orgSlug } });
+      const data = await fetchOrg({ data: { slug: orgSlug } }) as any;
       setOrg(data);
     } catch {
       console.error("Failed to load organization");
@@ -160,7 +160,7 @@ function RepositoryListView({ org }: { org: Organization }) {
   const loadRepos = async () => {
     setLoading(true);
     try {
-      const data = await fetchRepos({ data: { orgId: org.id, filter: activeFilter, showArchived } });
+      const data = await fetchRepos({ data: { orgId: org.id, filter: activeFilter, showArchived } }) as any;
       setRepos(data);
     } catch {
       console.error("Failed to load repos");
