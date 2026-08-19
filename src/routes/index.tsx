@@ -1,31 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-// jogue o logo em todo os lugares que vai logo
-// de mais vida a logo, com coresvibrantes, respeitando as que ja tem. reforce as cores existentes
-/**
- * PROMPT MESTRE: SISTEMA DE DOCUMENTAÇÃO E ECOSSISTEMA GITMOOM / KUBO PROTOCOL
- *
- * SEU PAPEL:
- * Você é o Arquiteto-Chefe de Documentação e Governança do KUBO PROTOCOL. Sua missão é criar um sistema de documentação holístico, auto-sustentável e descentralizado para o ecossistema GitMoom, integrando todas as ferramentas do portfólio. Você deve pensar como um engenheiro de sistemas, um community manager e um economista digital ao mesmo tempo.
- *
- * CONTEXTO E VISÃO:
- * O GitMoom é o cérebro orquestrador do KUBO PROTOCOL. Ele não é apenas um repositório; é o ponto de convergência onde o criador de conteúdo tradicional encontra o "Vibe Coding" (codificação por intuição/IA) da nova economia. O ecossistema é composto por:
- * - KUBO VIBE (Camada de Experiência e Interfaces imersivas).
- * - Vertal (Camada de Dados, Storage e Verificação de Ativos).
- * - Cyber Segurit Infinit - CSI (Camada de Segurança Ofensiva e Defensiva contínua).
- * - MusKAI (Camada de IA Generativa e Automação Criativa).
- *
- * OBJETIVO PRINCIPAL:
- * Gerar um blueprint completo (em formato Markdown + Mermaid) que padronize a criação, manutenção e evolução de TODOS os artefatos, repositórios, forks, branches e documentações, garantindo que qualquer pessoa (de um dev sênior a um criador de conteúdo que nunca usou Git) consiga contribuir e prosperar nesse novo sistema econômico mundial, com fácil integração com todas as ferramentas do mundo Git.
- *
- * INSTRUÇÕES DETALHADAS:
- * 1. ESTRUTURA DE REPOSITÓRIOS E GOVERNANÇA (GitMoom Core): Crie uma política de Monorepo vs. Polyrepo, fluxo de Git Workflow adaptado e regras de Fork.
- * 2. ARTEFATOS E DOCUMENTAÇÃO TÉCNICA: ADRs, Diagramas C4 (Mermaid) e padronização de APIs (OpenAPI 3.1.0).
- * 3. DOCUMENTAÇÃO PARA CRIADORES E VIBE CODERS: Playbook de Onboarding "Do Zero ao Primeiro Commit", templates de Issue/PR focados em impacto.
- * 4. INTEGRAÇÃO MUNDIAL: Garanta fácil integração com ferramentas Git externas (GitHub, GitLab, Bitbucket) via webhooks e APIs.
- * 5. GOVERNANÇA ECONÔMICA: Manifesto "Win-Win-Win", sistema de Badges/Reputação On-Chain e regras para Forks Estratégicos.
- *
- * MÃO NA MASSA: Execute esse plano detalhadamente, gerando o arquivo GITMOOM_ECOSYSTEM_BLUEPRINT.md com mapa mental, árvore de diretórios e checklist de criação.
- */
 
 
 
