@@ -3,7 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { 
   User, Book, Star, GitBranch, 
   Users, Building, Heart, Settings,
-  LogOut, Plus, Moon, Sun, Key, RefreshCw, Shield, Terminal
+  LogOut, Plus, Moon, Sun, Key, RefreshCw, Shield, Terminal, Workflow
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTheme } from "@/lib/theme";
