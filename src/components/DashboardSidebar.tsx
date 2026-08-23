@@ -27,6 +27,7 @@ export function DashboardSidebar({ user, activeTab }: DashboardSidebarProps) {
     { id: "sponsors", icon: Heart, label: "Sponsors", to: "/dashboard" },
     { id: "api-keys", icon: Key, label: "API Keys", to: "/_authenticated/dashboard/settings/api-keys" },
     { id: "integrations", icon: RefreshCw, label: "Integrations", to: "/_authenticated/dashboard/settings/integrations" },
+    { id: "actions", icon: Workflow, label: "GitMoom Action", to: "/dashboard/actions" },
     { id: "secrets", icon: Shield, label: "Secrets", to: "/_authenticated/dashboard/settings/secrets" },
     { id: "keys", icon: Terminal, label: "SSH & GPG Keys", to: "/_authenticated/dashboard/settings/keys" },
   ];
