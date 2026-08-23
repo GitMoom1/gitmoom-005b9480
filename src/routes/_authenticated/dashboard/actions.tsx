@@ -257,7 +257,7 @@ function ActionsPage() {
                               <StatusBadge status={job.status} />
                             </div>
                             <pre className="max-h-64 overflow-auto rounded-lg bg-muted p-3 text-xs leading-relaxed">
-                              {job.logs ??
+                              {job.logs ||
                                 (job.steps ?? [])
                                   .map((step) => `[${step.status}] ${step.name}\n${step.logs ?? ''}`)
                                   .join('\n') ||
