@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout/return'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDashboardRepositoriesRouteImport } from './routes/_authenticated/dashboard/repositories'
 import { Route as AuthenticatedDashboardActionsRouteImport } from './routes/_authenticated/dashboard/actions'
 import { Route as AuthenticatedAdminOrganizationsRouteImport } from './routes/_authenticated/admin.organizations'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
@@ -54,6 +55,12 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedDashboardRepositoriesRoute =
+  AuthenticatedDashboardRepositoriesRouteImport.update({
+    id: '/repositories',
+    path: '/repositories',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 const AuthenticatedDashboardActionsRoute =
   AuthenticatedDashboardActionsRouteImport.update({
     id: '/actions',
@@ -117,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/dashboard/actions': typeof AuthenticatedDashboardActionsRoute
+  '/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRoute
   '/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
   '/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
@@ -133,6 +141,7 @@ export interface FileRoutesByTo {
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/dashboard/actions': typeof AuthenticatedDashboardActionsRoute
+  '/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRoute
   '/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
   '/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
@@ -151,6 +160,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/_authenticated/dashboard/actions': typeof AuthenticatedDashboardActionsRoute
+  '/_authenticated/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRoute
   '/_authenticated/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/_authenticated/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
   '/_authenticated/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
@@ -169,6 +179,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/organizations'
     | '/dashboard/actions'
+    | '/dashboard/repositories'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/integrations'
     | '/dashboard/settings/keys'
@@ -185,6 +196,7 @@ export interface FileRouteTypes {
     | '/admin/leads'
     | '/admin/organizations'
     | '/dashboard/actions'
+    | '/dashboard/repositories'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/integrations'
     | '/dashboard/settings/keys'
@@ -202,6 +214,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/leads'
     | '/_authenticated/admin/organizations'
     | '/_authenticated/dashboard/actions'
+    | '/_authenticated/dashboard/repositories'
     | '/_authenticated/dashboard/settings/api-keys'
     | '/_authenticated/dashboard/settings/integrations'
     | '/_authenticated/dashboard/settings/keys'
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/dashboard/repositories': {
+      id: '/_authenticated/dashboard/repositories'
+      path: '/repositories'
+      fullPath: '/dashboard/repositories'
+      preLoaderRoute: typeof AuthenticatedDashboardRepositoriesRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
     }
     '/_authenticated/dashboard/actions': {
       id: '/_authenticated/dashboard/actions'
@@ -332,6 +352,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardActionsRoute: typeof AuthenticatedDashboardActionsRoute
+  AuthenticatedDashboardRepositoriesRoute: typeof AuthenticatedDashboardRepositoriesRoute
   AuthenticatedDashboardSettingsApiKeysRoute: typeof AuthenticatedDashboardSettingsApiKeysRoute
   AuthenticatedDashboardSettingsIntegrationsRoute: typeof AuthenticatedDashboardSettingsIntegrationsRoute
   AuthenticatedDashboardSettingsKeysRoute: typeof AuthenticatedDashboardSettingsKeysRoute
@@ -341,6 +362,8 @@ interface AuthenticatedDashboardRouteChildren {
 const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardActionsRoute: AuthenticatedDashboardActionsRoute,
+    AuthenticatedDashboardRepositoriesRoute:
+      AuthenticatedDashboardRepositoriesRoute,
     AuthenticatedDashboardSettingsApiKeysRoute:
       AuthenticatedDashboardSettingsApiKeysRoute,
     AuthenticatedDashboardSettingsIntegrationsRoute:
