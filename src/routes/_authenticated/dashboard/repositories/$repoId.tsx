@@ -3,7 +3,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import {
-  ArrowLeft, Book, Database, GitBranch, GitCommitHorizontal, GitTag,
+  ArrowLeft, Book, Database, GitBranch, GitCommitHorizontal, Tag,
   HardDrive, Package, Rocket, ShieldCheck, Star, Trash2,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -136,7 +136,7 @@ function RepositoryDetailPage() {
         {[
           { icon: GitBranch, label: 'Branches', value: branches.length },
           { icon: GitCommitHorizontal, label: 'Commits', value: commits.length },
-          { icon: GitTag, label: 'Tags', value: tags.length },
+          { icon: Tag, label: 'Tags', value: tags.length },
           { icon: Package, label: 'Releases', value: releases.length },
         ].map((stat) => (
           <Card key={stat.label}>
@@ -293,7 +293,7 @@ function RepositoryDetailPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <GitTag className="h-5 w-5 text-primary" /> Tags
+              <Tag className="h-5 w-5 text-primary" /> Tags
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -323,7 +323,7 @@ function RepositoryDetailPage() {
                   key={tag.id}
                   className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1 text-xs"
                 >
-                  <GitTag className="h-3 w-3" /> {tag.name}
+                  <Tag className="h-3 w-3" /> {tag.name}
                   {tag.target_sha ? ` · ${tag.target_sha.slice(0, 7)}` : ''}
                 </span>
               ))}
