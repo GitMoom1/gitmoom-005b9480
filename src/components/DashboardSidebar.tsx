@@ -19,7 +19,7 @@ export function DashboardSidebar({ user, activeTab }: DashboardSidebarProps) {
 
   const menuItems = [
     { id: "profile", icon: User, label: "Profile", to: "/dashboard" },
-    { id: "repositories", icon: Book, label: "Repositories", to: "/dashboard" },
+    { id: "repositories", icon: Book, label: "Repositories", to: "/dashboard/repositories" },
     { id: "stars", icon: Star, label: "Stars", to: "/dashboard" },
     { id: "gists", icon: GitBranch, label: "Gists", to: "/dashboard" },
     { id: "organizations", icon: Users, label: "Organizations", to: "/admin/organizations" },
