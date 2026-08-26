@@ -25,6 +25,7 @@ import { Route as AuthenticatedDashboardSettingsSecretsRouteImport } from './rou
 import { Route as AuthenticatedDashboardSettingsKeysRouteImport } from './routes/_authenticated/dashboard/settings/keys'
 import { Route as AuthenticatedDashboardSettingsIntegrationsRouteImport } from './routes/_authenticated/dashboard/settings/integrations'
 import { Route as AuthenticatedDashboardSettingsApiKeysRouteImport } from './routes/_authenticated/dashboard/settings/api-keys'
+import { Route as AuthenticatedDashboardRepositoriesRepoIdRouteImport } from './routes/_authenticated/dashboard/repositories/$repoId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -114,6 +115,12 @@ const AuthenticatedDashboardSettingsApiKeysRoute =
     path: '/settings/api-keys',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const AuthenticatedDashboardRepositoriesRepoIdRoute =
+  AuthenticatedDashboardRepositoriesRepoIdRouteImport.update({
+    id: '/$repoId',
+    path: '/$repoId',
+    getParentRoute: () => AuthenticatedDashboardRepositoriesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,7 +131,8 @@ export interface FileRoutesByFullPath {
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/dashboard/actions': typeof AuthenticatedDashboardActionsRoute
-  '/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRoute
+  '/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRouteWithChildren
+  '/dashboard/repositories/$repoId': typeof AuthenticatedDashboardRepositoriesRepoIdRoute
   '/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
   '/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
@@ -141,7 +149,8 @@ export interface FileRoutesByTo {
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/dashboard/actions': typeof AuthenticatedDashboardActionsRoute
-  '/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRoute
+  '/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRouteWithChildren
+  '/dashboard/repositories/$repoId': typeof AuthenticatedDashboardRepositoriesRepoIdRoute
   '/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
   '/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
@@ -160,7 +169,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/organizations': typeof AuthenticatedAdminOrganizationsRoute
   '/_authenticated/dashboard/actions': typeof AuthenticatedDashboardActionsRoute
-  '/_authenticated/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRoute
+  '/_authenticated/dashboard/repositories': typeof AuthenticatedDashboardRepositoriesRouteWithChildren
+  '/_authenticated/dashboard/repositories/$repoId': typeof AuthenticatedDashboardRepositoriesRepoIdRoute
   '/_authenticated/dashboard/settings/api-keys': typeof AuthenticatedDashboardSettingsApiKeysRoute
   '/_authenticated/dashboard/settings/integrations': typeof AuthenticatedDashboardSettingsIntegrationsRoute
   '/_authenticated/dashboard/settings/keys': typeof AuthenticatedDashboardSettingsKeysRoute
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/admin/organizations'
     | '/dashboard/actions'
     | '/dashboard/repositories'
+    | '/dashboard/repositories/$repoId'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/integrations'
     | '/dashboard/settings/keys'
@@ -197,6 +208,7 @@ export interface FileRouteTypes {
     | '/admin/organizations'
     | '/dashboard/actions'
     | '/dashboard/repositories'
+    | '/dashboard/repositories/$repoId'
     | '/dashboard/settings/api-keys'
     | '/dashboard/settings/integrations'
     | '/dashboard/settings/keys'
@@ -215,6 +227,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/organizations'
     | '/_authenticated/dashboard/actions'
     | '/_authenticated/dashboard/repositories'
+    | '/_authenticated/dashboard/repositories/$repoId'
     | '/_authenticated/dashboard/settings/api-keys'
     | '/_authenticated/dashboard/settings/integrations'
     | '/_authenticated/dashboard/settings/keys'
@@ -347,12 +360,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardSettingsApiKeysRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/_authenticated/dashboard/repositories/$repoId': {
+      id: '/_authenticated/dashboard/repositories/$repoId'
+      path: '/$repoId'
+      fullPath: '/dashboard/repositories/$repoId'
+      preLoaderRoute: typeof AuthenticatedDashboardRepositoriesRepoIdRouteImport
+      parentRoute: typeof AuthenticatedDashboardRepositoriesRoute
+    }
   }
 }
 
+interface AuthenticatedDashboardRepositoriesRouteChildren {
+  AuthenticatedDashboardRepositoriesRepoIdRoute: typeof AuthenticatedDashboardRepositoriesRepoIdRoute
+}
+
+const AuthenticatedDashboardRepositoriesRouteChildren: AuthenticatedDashboardRepositoriesRouteChildren =
+  {
+    AuthenticatedDashboardRepositoriesRepoIdRoute:
+      AuthenticatedDashboardRepositoriesRepoIdRoute,
+  }
+
+const AuthenticatedDashboardRepositoriesRouteWithChildren =
+  AuthenticatedDashboardRepositoriesRoute._addFileChildren(
+    AuthenticatedDashboardRepositoriesRouteChildren,
+  )
+
 interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardActionsRoute: typeof AuthenticatedDashboardActionsRoute
-  AuthenticatedDashboardRepositoriesRoute: typeof AuthenticatedDashboardRepositoriesRoute
+  AuthenticatedDashboardRepositoriesRoute: typeof AuthenticatedDashboardRepositoriesRouteWithChildren
   AuthenticatedDashboardSettingsApiKeysRoute: typeof AuthenticatedDashboardSettingsApiKeysRoute
   AuthenticatedDashboardSettingsIntegrationsRoute: typeof AuthenticatedDashboardSettingsIntegrationsRoute
   AuthenticatedDashboardSettingsKeysRoute: typeof AuthenticatedDashboardSettingsKeysRoute
@@ -363,7 +398,7 @@ const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
   {
     AuthenticatedDashboardActionsRoute: AuthenticatedDashboardActionsRoute,
     AuthenticatedDashboardRepositoriesRoute:
-      AuthenticatedDashboardRepositoriesRoute,
+      AuthenticatedDashboardRepositoriesRouteWithChildren,
     AuthenticatedDashboardSettingsApiKeysRoute:
       AuthenticatedDashboardSettingsApiKeysRoute,
     AuthenticatedDashboardSettingsIntegrationsRoute:
