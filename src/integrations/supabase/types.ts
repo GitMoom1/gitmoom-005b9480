@@ -50,6 +50,50 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_usage: {
+        Row: {
+          action_type: string
+          commit_sha: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          model: string | null
+          repository_id: string | null
+          tokens_used: number
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          commit_sha?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          model?: string | null
+          repository_id?: string | null
+          tokens_used?: number
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          commit_sha?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          model?: string | null
+          repository_id?: string | null
+          tokens_used?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -79,6 +123,156 @@ export type Database = {
           target_type?: string | null
         }
         Relationships: []
+      }
+      branches: {
+        Row: {
+          created_at: string
+          head_sha: string | null
+          id: string
+          is_default: boolean
+          is_protected: boolean
+          name: string
+          repository_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          head_sha?: string | null
+          id?: string
+          is_default?: boolean
+          is_protected?: boolean
+          name: string
+          repository_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          head_sha?: string | null
+          id?: string
+          is_default?: boolean
+          is_protected?: boolean
+          name?: string
+          repository_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branches_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commit_reviews: {
+        Row: {
+          action: string
+          commit_sha: string
+          created_at: string
+          id: string
+          model: string | null
+          repository_id: string
+          result: string | null
+          status: string
+          summary: string | null
+          tokens_used: number
+          user_id: string
+        }
+        Insert: {
+          action: string
+          commit_sha: string
+          created_at?: string
+          id?: string
+          model?: string | null
+          repository_id: string
+          result?: string | null
+          status?: string
+          summary?: string | null
+          tokens_used?: number
+          user_id: string
+        }
+        Update: {
+          action?: string
+          commit_sha?: string
+          created_at?: string
+          id?: string
+          model?: string | null
+          repository_id?: string
+          result?: string | null
+          status?: string
+          summary?: string | null
+          tokens_used?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commit_reviews_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commits: {
+        Row: {
+          additions: number
+          author_email: string | null
+          author_id: string | null
+          author_name: string | null
+          branch: string
+          committed_at: string
+          created_at: string
+          deletions: number
+          files_changed: number
+          id: string
+          message: string
+          parent_sha: string | null
+          repository_id: string
+          sha: string
+        }
+        Insert: {
+          additions?: number
+          author_email?: string | null
+          author_id?: string | null
+          author_name?: string | null
+          branch?: string
+          committed_at?: string
+          created_at?: string
+          deletions?: number
+          files_changed?: number
+          id?: string
+          message: string
+          parent_sha?: string | null
+          repository_id: string
+          sha: string
+        }
+        Update: {
+          additions?: number
+          author_email?: string | null
+          author_id?: string | null
+          author_name?: string | null
+          branch?: string
+          committed_at?: string
+          created_at?: string
+          deletions?: number
+          files_changed?: number
+          id?: string
+          message?: string
+          parent_sha?: string | null
+          repository_id?: string
+          sha?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commits_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_log: {
         Row: {
@@ -167,6 +361,50 @@ export type Database = {
         }
         Relationships: []
       }
+      git_objects: {
+        Row: {
+          created_at: string
+          engine: string
+          id: string
+          kind: string
+          metadata: Json
+          repository_id: string
+          sha: string
+          size_bytes: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          engine?: string
+          id?: string
+          kind?: string
+          metadata?: Json
+          repository_id: string
+          sha: string
+          size_bytes?: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          engine?: string
+          id?: string
+          kind?: string
+          metadata?: Json
+          repository_id?: string
+          sha?: string
+          size_bytes?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "git_objects_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
@@ -197,6 +435,424 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_settings: {
+        Row: {
+          allow_forks: boolean
+          allow_templates: boolean
+          created_at: string
+          id: string
+          internal_visibility: string
+          organization_id: string
+          private_visibility: string
+          public_visibility: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          allow_forks?: boolean
+          allow_templates?: boolean
+          created_at?: string
+          id?: string
+          internal_visibility?: string
+          organization_id: string
+          private_visibility?: string
+          public_visibility?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          allow_forks?: boolean
+          allow_templates?: boolean
+          created_at?: string
+          id?: string
+          internal_visibility?: string
+          organization_id?: string
+          private_visibility?: string
+          public_visibility?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          plan: string
+          slug: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          plan?: string
+          slug: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          plan?: string
+          slug?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          plan_expires_at: string | null
+          plan_tier: string
+          repo_limit: number
+          stripe_customer_id: string | null
+          tokens_remaining: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          plan_expires_at?: string | null
+          plan_tier?: string
+          repo_limit?: number
+          stripe_customer_id?: string | null
+          tokens_remaining?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          plan_expires_at?: string | null
+          plan_tier?: string
+          repo_limit?: number
+          stripe_customer_id?: string | null
+          tokens_remaining?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      releases: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_draft: boolean
+          is_prerelease: boolean
+          notes: string | null
+          published_at: string | null
+          repository_id: string
+          tag_name: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_draft?: boolean
+          is_prerelease?: boolean
+          notes?: string | null
+          published_at?: string | null
+          repository_id: string
+          tag_name: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_draft?: boolean
+          is_prerelease?: boolean
+          notes?: string | null
+          published_at?: string | null
+          repository_id?: string
+          tag_name?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "releases_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      repositories: {
+        Row: {
+          created_at: string
+          default_branch: string
+          description: string | null
+          id: string
+          is_archived: boolean
+          is_fork: boolean
+          is_template: boolean
+          language: string | null
+          name: string
+          organization_id: string | null
+          slug: string | null
+          star_count: number
+          storage_prefix: string | null
+          updated_at: string
+          user_id: string | null
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          default_branch?: string
+          description?: string | null
+          id?: string
+          is_archived?: boolean
+          is_fork?: boolean
+          is_template?: boolean
+          language?: string | null
+          name: string
+          organization_id?: string | null
+          slug?: string | null
+          star_count?: number
+          storage_prefix?: string | null
+          updated_at?: string
+          user_id?: string | null
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          default_branch?: string
+          description?: string | null
+          id?: string
+          is_archived?: boolean
+          is_fork?: boolean
+          is_template?: boolean
+          language?: string | null
+          name?: string
+          organization_id?: string | null
+          slug?: string | null
+          star_count?: number
+          storage_prefix?: string | null
+          updated_at?: string
+          user_id?: string | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "repositories_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      repository_stars: {
+        Row: {
+          created_at: string
+          id: string
+          repository_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          repository_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          repository_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "repository_stars_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      secrets: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          encrypted_value: string
+          environment: string
+          id: string
+          last_rotated_at: string | null
+          name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          encrypted_value: string
+          environment?: string
+          id?: string
+          last_rotated_at?: string | null
+          name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          encrypted_value?: string
+          environment?: string
+          id?: string
+          last_rotated_at?: string | null
+          name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ssh_keys: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          fingerprint: string
+          id: string
+          name: string
+          public_key: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          fingerprint: string
+          id?: string
+          name: string
+          public_key: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          fingerprint?: string
+          id?: string
+          name?: string
+          public_key?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          plan_tier: string
+          price_id: string
+          product_id: string | null
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          plan_tier?: string
+          price_id: string
+          product_id?: string | null
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          plan_tier?: string
+          price_id?: string
+          product_id?: string | null
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
@@ -218,6 +874,71 @@ export type Database = {
           id?: string
           metadata?: Json | null
           reason?: string
+        }
+        Relationships: []
+      }
+      tags: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          message: string | null
+          name: string
+          repository_id: string
+          target_sha: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          repository_id: string
+          target_sha?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          repository_id?: string
+          target_sha?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tags_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      token_ledger: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          reason: string
+          reference: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          reason: string
+          reference?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          reason?: string
+          reference?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -248,6 +969,15 @@ export type Database = {
     }
     Functions: {
       accept_admin_invite: { Args: { _token: string }; Returns: Json }
+      apply_plan_entitlements: {
+        Args: {
+          _period_end: string
+          _reference: string
+          _tier: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -264,6 +994,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_repo_readable: { Args: { _repo_id: string }; Returns: boolean }
+      is_repo_writable: { Args: { _repo_id: string }; Returns: boolean }
       log_audit: {
         Args: {
           _action: string
