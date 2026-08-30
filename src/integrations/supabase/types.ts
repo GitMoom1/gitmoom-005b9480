@@ -197,6 +197,75 @@ export type Database = {
         }
         Relationships: []
       }
+      secrets: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          encrypted_value: string
+          environment: string
+          id: string
+          last_rotated_at: string | null
+          name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          encrypted_value: string
+          environment?: string
+          id?: string
+          last_rotated_at?: string | null
+          name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          encrypted_value?: string
+          environment?: string
+          id?: string
+          last_rotated_at?: string | null
+          name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ssh_keys: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          fingerprint: string
+          id: string
+          name: string
+          public_key: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          fingerprint: string
+          id?: string
+          name: string
+          public_key: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          fingerprint?: string
+          id?: string
+          name?: string
+          public_key?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
