@@ -197,6 +197,121 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_settings: {
+        Row: {
+          allow_forks: boolean
+          allow_templates: boolean
+          created_at: string
+          id: string
+          internal_visibility: string
+          organization_id: string
+          private_visibility: string
+          public_visibility: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          allow_forks?: boolean
+          allow_templates?: boolean
+          created_at?: string
+          id?: string
+          internal_visibility?: string
+          organization_id: string
+          private_visibility?: string
+          public_visibility?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          allow_forks?: boolean
+          allow_templates?: boolean
+          created_at?: string
+          id?: string
+          internal_visibility?: string
+          organization_id?: string
+          private_visibility?: string
+          public_visibility?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          plan: string
+          slug: string
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          plan?: string
+          slug: string
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          plan?: string
+          slug?: string
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -235,6 +350,56 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      repositories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_archived: boolean
+          is_fork: boolean
+          is_template: boolean
+          name: string
+          organization_id: string | null
+          updated_at: string
+          user_id: string | null
+          visibility: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_archived?: boolean
+          is_fork?: boolean
+          is_template?: boolean
+          name: string
+          organization_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+          visibility?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_archived?: boolean
+          is_fork?: boolean
+          is_template?: boolean
+          name?: string
+          organization_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "repositories_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       secrets: {
         Row: {
