@@ -50,6 +50,50 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_usage: {
+        Row: {
+          action_type: string
+          commit_sha: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          model: string | null
+          repository_id: string | null
+          tokens_used: number
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          commit_sha?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          model?: string | null
+          repository_id?: string | null
+          tokens_used?: number
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          commit_sha?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          model?: string | null
+          repository_id?: string | null
+          tokens_used?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -79,6 +123,156 @@ export type Database = {
           target_type?: string | null
         }
         Relationships: []
+      }
+      branches: {
+        Row: {
+          created_at: string
+          head_sha: string | null
+          id: string
+          is_default: boolean
+          is_protected: boolean
+          name: string
+          repository_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          head_sha?: string | null
+          id?: string
+          is_default?: boolean
+          is_protected?: boolean
+          name: string
+          repository_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          head_sha?: string | null
+          id?: string
+          is_default?: boolean
+          is_protected?: boolean
+          name?: string
+          repository_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "branches_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commit_reviews: {
+        Row: {
+          action: string
+          commit_sha: string
+          created_at: string
+          id: string
+          model: string | null
+          repository_id: string
+          result: string | null
+          status: string
+          summary: string | null
+          tokens_used: number
+          user_id: string
+        }
+        Insert: {
+          action: string
+          commit_sha: string
+          created_at?: string
+          id?: string
+          model?: string | null
+          repository_id: string
+          result?: string | null
+          status?: string
+          summary?: string | null
+          tokens_used?: number
+          user_id: string
+        }
+        Update: {
+          action?: string
+          commit_sha?: string
+          created_at?: string
+          id?: string
+          model?: string | null
+          repository_id?: string
+          result?: string | null
+          status?: string
+          summary?: string | null
+          tokens_used?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commit_reviews_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commits: {
+        Row: {
+          additions: number
+          author_email: string | null
+          author_id: string | null
+          author_name: string | null
+          branch: string
+          committed_at: string
+          created_at: string
+          deletions: number
+          files_changed: number
+          id: string
+          message: string
+          parent_sha: string | null
+          repository_id: string
+          sha: string
+        }
+        Insert: {
+          additions?: number
+          author_email?: string | null
+          author_id?: string | null
+          author_name?: string | null
+          branch?: string
+          committed_at?: string
+          created_at?: string
+          deletions?: number
+          files_changed?: number
+          id?: string
+          message: string
+          parent_sha?: string | null
+          repository_id: string
+          sha: string
+        }
+        Update: {
+          additions?: number
+          author_email?: string | null
+          author_id?: string | null
+          author_name?: string | null
+          branch?: string
+          committed_at?: string
+          created_at?: string
+          deletions?: number
+          files_changed?: number
+          id?: string
+          message?: string
+          parent_sha?: string | null
+          repository_id?: string
+          sha?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commits_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       email_send_log: {
         Row: {
@@ -166,6 +360,50 @@ export type Database = {
           used_at?: string | null
         }
         Relationships: []
+      }
+      git_objects: {
+        Row: {
+          created_at: string
+          engine: string
+          id: string
+          kind: string
+          metadata: Json
+          repository_id: string
+          sha: string
+          size_bytes: number
+          storage_path: string
+        }
+        Insert: {
+          created_at?: string
+          engine?: string
+          id?: string
+          kind?: string
+          metadata?: Json
+          repository_id: string
+          sha: string
+          size_bytes?: number
+          storage_path: string
+        }
+        Update: {
+          created_at?: string
+          engine?: string
+          id?: string
+          kind?: string
+          metadata?: Json
+          repository_id?: string
+          sha?: string
+          size_bytes?: number
+          storage_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "git_objects_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       leads: {
         Row: {
@@ -351,42 +589,107 @@ export type Database = {
         }
         Relationships: []
       }
+      releases: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_draft: boolean
+          is_prerelease: boolean
+          notes: string | null
+          published_at: string | null
+          repository_id: string
+          tag_name: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_draft?: boolean
+          is_prerelease?: boolean
+          notes?: string | null
+          published_at?: string | null
+          repository_id: string
+          tag_name: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_draft?: boolean
+          is_prerelease?: boolean
+          notes?: string | null
+          published_at?: string | null
+          repository_id?: string
+          tag_name?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "releases_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       repositories: {
         Row: {
           created_at: string
+          default_branch: string
           description: string | null
           id: string
           is_archived: boolean
           is_fork: boolean
           is_template: boolean
+          language: string | null
           name: string
           organization_id: string | null
+          slug: string | null
+          star_count: number
+          storage_prefix: string | null
           updated_at: string
           user_id: string | null
           visibility: string
         }
         Insert: {
           created_at?: string
+          default_branch?: string
           description?: string | null
           id?: string
           is_archived?: boolean
           is_fork?: boolean
           is_template?: boolean
+          language?: string | null
           name: string
           organization_id?: string | null
+          slug?: string | null
+          star_count?: number
+          storage_prefix?: string | null
           updated_at?: string
           user_id?: string | null
           visibility?: string
         }
         Update: {
           created_at?: string
+          default_branch?: string
           description?: string | null
           id?: string
           is_archived?: boolean
           is_fork?: boolean
           is_template?: boolean
+          language?: string | null
           name?: string
           organization_id?: string | null
+          slug?: string | null
+          star_count?: number
+          storage_prefix?: string | null
           updated_at?: string
           user_id?: string | null
           visibility?: string
@@ -397,6 +700,35 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      repository_stars: {
+        Row: {
+          created_at: string
+          id: string
+          repository_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          repository_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          repository_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "repository_stars_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
             referencedColumns: ["id"]
           },
         ]
@@ -545,6 +877,44 @@ export type Database = {
         }
         Relationships: []
       }
+      tags: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          message: string | null
+          name: string
+          repository_id: string
+          target_sha: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          repository_id: string
+          target_sha?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          repository_id?: string
+          target_sha?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tags_repository_id_fkey"
+            columns: ["repository_id"]
+            isOneToOne: false
+            referencedRelation: "repositories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       token_ledger: {
         Row: {
           amount: number
@@ -624,6 +994,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_repo_readable: { Args: { _repo_id: string }; Returns: boolean }
+      is_repo_writable: { Args: { _repo_id: string }; Returns: boolean }
       log_audit: {
         Args: {
           _action: string
