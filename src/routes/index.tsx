@@ -19,7 +19,6 @@ import {
   Rocket,
   Check,
   ArrowRight,
-  Star,
   Github,
   LayoutDashboard,
   Users
