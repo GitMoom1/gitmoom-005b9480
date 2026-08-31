@@ -43,7 +43,7 @@ function CheckoutReturn() {
       ) : (
         <>
           <AlertCircle className="h-12 w-12 text-muted-foreground" />
-          <h1 className="mt-6 text-3xl font-semibold tracking-tight">Nada para mostrar aqui</h1>
+          <h1 className="mt-6 text-3xl font-semibold tracking-tight">Pagamento não encontrado</h1>
           <p className="mt-3 text-muted-foreground">
             Não encontramos informações desse pagamento. Se você concluiu uma compra, verifique seu
             e-mail de confirmação.

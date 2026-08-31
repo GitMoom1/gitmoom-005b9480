@@ -24,13 +24,13 @@ import {
 export const Route = createFileRoute('/_authenticated/dashboard/repositories/$repoId')({
   head: () => ({
     meta: [
-      { title: 'Repositório — GitMoom Git Core' },
+      { title: 'Repositório — GitMoon Git Core' },
       {
         name: 'description',
-        content: 'Branches, commits, tags, releases e objetos Git deste repositório no GitMoom.',
+        content: 'Branches, commits, tags, releases e objetos Git deste repositório no GitMoon.',
       },
-      { property: 'og:title', content: 'Repositório — GitMoom Git Core' },
-      { property: 'og:description', content: 'Detalhe do repositório no Git Core do GitMoom.' },
+      { property: 'og:title', content: 'Repositório — GitMoon Git Core' },
+      { property: 'og:description', content: 'Detalhe do repositório no Git Core do GitMoon.' },
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary_large_image' },
     ],
