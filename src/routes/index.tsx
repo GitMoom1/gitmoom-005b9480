@@ -495,27 +495,19 @@ release:
       </section>
 
 
-      {/* Testimonial */}
+      {/* Como funciona */}
       <section className="border-y border-border/40 bg-card/30">
         <div className="mx-auto max-w-4xl px-6 py-24 text-center">
-          <div className="mx-auto mb-6 flex justify-center gap-1 text-accent">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star key={i} className="h-5 w-5 fill-current" />
-            ))}
-          </div>
-          <blockquote className="text-2xl font-medium leading-relaxed tracking-tight md:text-3xl">
-            “We cut our PR cycle time from 3 days to 4 hours. GitMoon paid for itself in the first
-            week — and our engineers actually want to use it.”
-          </blockquote>
-          <div className="mt-8 flex items-center justify-center gap-3 text-sm text-muted-foreground">
-            <div className="h-10 w-10 rounded-full bg-gradient-cosmic" />
-            <div className="text-left">
-              <div className="font-semibold text-foreground">Ava Chen</div>
-              <div>VP Engineering · Lunar Labs</div>
-            </div>
-          </div>
+          <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+            Do push ao deploy sem sair do GitMoon
+          </h2>
+          <p className="mt-4 text-muted-foreground">
+            Cada commit no Git Core pode acionar o GitMoonAgent para code review, auto-fix, refactor
+            e documentação — e o GitMoon Action leva o resultado até produção.
+          </p>
         </div>
       </section>
+
 
       {/* CTA */}
       <section id="cta" className="mx-auto max-w-5xl px-6 py-24 md:py-32">
