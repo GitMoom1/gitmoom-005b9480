@@ -338,22 +338,23 @@ function Index() {
         </div>
       </section>
 
-      {/* Logos */}
+      {/* Plataforma */}
       <section className="border-y border-border/40 bg-card/30">
         <div className="mx-auto max-w-6xl px-6 py-10">
           <p className="text-center text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Trusted by teams shipping at scale
+            Uma plataforma Git completa, do commit ao deploy
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-lg font-semibold text-muted-foreground/70">
-            <span>◐ Lunar Labs</span>
-            <span>✦ Nebula</span>
-            <span>◇ Orbital</span>
-            <span>△ Stellar</span>
-            <span>◎ Cosmos</span>
-            <span>✺ Helios</span>
+            <span>Git Core</span>
+            <span>GitMoonAgent (IA)</span>
+            <span>GitMoon Action (CI/CD)</span>
+            <span>Secrets &amp; SSH/GPG</span>
+            <span>Organizações</span>
+            <span>API &amp; Webhooks</span>
           </div>
         </div>
       </section>
+
 
       {/* Features */}
       <section id="features" className="mx-auto max-w-7xl px-6 py-24 md:py-32">
