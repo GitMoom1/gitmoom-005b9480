@@ -15,16 +15,16 @@ import {
 export const Route = createFileRoute('/_authenticated/dashboard/repositories')({
   head: () => ({
     meta: [
-      { title: 'Repositórios — GitMoom Git Core' },
+      { title: 'Repositórios — GitMoon Git Core' },
       {
         name: 'description',
         content:
-          'Crie e gerencie repositórios reais no GitMoom Git Core: branches, commits, tags, releases e objetos Git.',
+          'Crie e gerencie repositórios reais no GitMoon Git Core: branches, commits, tags, releases e objetos Git.',
       },
-      { property: 'og:title', content: 'Repositórios — GitMoom Git Core' },
+      { property: 'og:title', content: 'Repositórios — GitMoon Git Core' },
       {
         property: 'og:description',
-        content: 'Git Core do GitMoom: repositórios, branches, commits, tags e releases.',
+        content: 'Git Core do GitMoon: repositórios, branches, commits, tags e releases.',
       },
       { property: 'og:type', content: 'website' },
       { name: 'twitter:card', content: 'summary_large_image' },
@@ -98,7 +98,7 @@ function RepositoriesPage() {
             Git Core · Repositórios
           </h1>
           <p className="mt-1 text-muted-foreground">
-            Metadados no banco do GitMoom, objetos Git na KUBO Infra (storage híbrido).
+            Metadados no banco do GitMoon, objetos Git na KUBO Infra (storage híbrido).
           </p>
         </div>
         <Button variant="outline" onClick={() => repos.refetch()} disabled={repos.isFetching}>

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://gitmoom.lovable.app/sitemap.xml
+Sitemap: https://gitmoom-com.lovable.app/sitemap.xml
