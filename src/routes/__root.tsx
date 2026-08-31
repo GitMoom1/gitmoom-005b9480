@@ -83,6 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "GitMoon — Ship code at the speed of light" },
       { name: "description", content: "GitMoon is the AI-powered git workflow that automates reviews, merges, and releases for modern engineering teams." },
       { name: "author", content: "GitMoon" },
+      { name: "google-site-verification", content: "uB4idyQrku2CkvRY27h_l9HA-LtzabswdCewwhPtvbA" },
       { property: "og:title", content: "GitMoon — Ship code at the speed of light" },
       { property: "og:description", content: "GitMoon is the AI-powered git workflow that automates reviews, merges, and releases for modern engineering teams." },
       { property: "og:type", content: "website" },
