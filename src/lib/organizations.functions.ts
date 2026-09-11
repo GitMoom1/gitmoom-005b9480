@@ -1,5 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { Database } from "@/integrations/supabase/types";
+
+type Organization = Database["public"]["Tables"]["organizations"]["Row"];
+type OrganizationSettings = Database["public"]["Tables"]["organization_settings"]["Row"];
+type Repository = Database["public"]["Tables"]["repositories"]["Row"];
 
 export const createOrganization = createServerFn({ method: "POST" })
   .inputValidator(
@@ -14,7 +19,7 @@ export const createOrganization = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Create the organization
-    const { data: org, error: orgError } = await (supabaseAdmin as any)
+    const { data: org, error: orgError } = await supabaseAdmin
       .from("organizations")
       .insert({
         name: data.name,
@@ -24,12 +29,12 @@ export const createOrganization = createServerFn({ method: "POST" })
         visibility: "PUBLIC"
       })
       .select()
-      .single();
+      .single<Organization>();
 
     if (orgError) throw new Error(orgError.message);
 
     // Create default settings
-    const { error: settingsError } = await (supabaseAdmin as any)
+    const { error: settingsError } = await supabaseAdmin
       .from("organization_settings")
       .insert({
         organization_id: org.id,
@@ -50,7 +55,7 @@ export const getOrganization = createServerFn({ method: "GET" })
   .inputValidator((data: unknown) => z.object({ slug: z.string() }).parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: org, error } = await (supabaseAdmin as any)
+    const { data: org, error } = await supabaseAdmin
       .from("organizations")
       .select(`
         *,
@@ -60,7 +65,7 @@ export const getOrganization = createServerFn({ method: "GET" })
         )
       `)
       .eq("slug", data.slug)
-      .single();
+      .single<Organization>();
 
     if (error) throw new Error(error.message);
     return org;
@@ -77,7 +82,7 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    let query = (supabaseAdmin as any)
+    let query = supabaseAdmin
       .from("repositories")
       .select("*")
       .eq("organization_id", data.orgId);
@@ -109,7 +114,7 @@ export const getOrganizationRepos = createServerFn({ method: "GET" })
 
     const { data: repos, error } = await query;
     if (error) throw new Error(error.message);
-    return repos;
+    return repos as Repository[];
   });
 
 export const updateOrganizationSettings = createServerFn({ method: "POST" })
@@ -122,7 +127,7 @@ export const updateOrganizationSettings = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await (supabaseAdmin as any)
+    const { error } = await supabaseAdmin
       .from("organization_settings")
       .update(data.settings)
       .eq("organization_id", data.orgId);
@@ -141,7 +146,7 @@ export const toggleRepoArchive = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await (supabaseAdmin as any)
+    const { error } = await supabaseAdmin
       .from("repositories")
       .update({ is_archived: data.archived })
       .eq("id", data.repoId);
@@ -162,18 +167,18 @@ export const transferRepoToOrg = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Check if plan allows transfer
-    const { data: org, error: orgError } = await (supabaseAdmin as any)
+    const { data: org, error: orgError } = await supabaseAdmin
       .from("organizations")
       .select("plan")
       .eq("id", data.targetOrgId)
-      .single();
+      .single<Pick<Organization, "plan">>();
 
     if (orgError) throw new Error("Target organization not found");
     if (org?.plan === 'free') {
       throw new Error("Repository transfer requires a paid plan (Eclipse, Galaxy, or Supernova)");
     }
 
-    const { error } = await (supabaseAdmin as any)
+    const { error } = await supabaseAdmin
       .from("repositories")
       .update({ organization_id: data.targetOrgId })
       .eq("id", data.repoId);
